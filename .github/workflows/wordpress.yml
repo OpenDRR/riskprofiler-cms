@@ -1,0 +1,30 @@
+name: WordPress fun!
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  #container-job:
+  #  runs-on: ubuntu-20.04
+
+  #container:
+  #  image: wordpress:cli
+
+  #services:
+  #  mysql:
+  #    image: mysql:5.7
+
+  try-host-mysql:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Explore MySQL
+        run: |
+          which mysql
+          mysql --version
+          ps auxwww | grep -i sql
