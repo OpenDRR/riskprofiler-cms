@@ -9,17 +9,7 @@ on:
     - main
 
 jobs:
-  #container-job:
-  #  runs-on: ubuntu-20.04
-
-  #container:
-  #  image: wordpress:cli
-
-  #services:
-  #  mysql:
-  #    image: mysql:5.7
-
-  try-host-mysql:
+  wordpress-static:
     runs-on: ubuntu-20.04
 
     steps:
@@ -53,15 +43,7 @@ jobs:
       # https://docs.wp2static.com/en/getting-started/installation/#via-cli
       #- run: wp plugin install static-html-output-plugin --activate
 
-      # outdated?
+      # Install and activate Simply Static
       - run: wp plugin install simply-static --activate
 
-      # https://grrr.tech/posts/2020/wordpress-static-site-generator-and-deployment-via-simply-static-deploy/
-      - run: sudo eatmydata apt-get update
-      - run: sudo eatmydata apt-get install composer
-      - run: mkdir webb
-      - run: pwd
-      - run: |
-          cd webb
-          pwd
-      - run: pwd
+      - run: tree -ifpugDs
