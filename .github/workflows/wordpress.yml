@@ -23,12 +23,14 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Explore MySQL
-        run: |
-          which mysql
-          mysql --version
-          sudo systemctl status mysql.service || :
-          sudo systemctl start mysql.service
-          sleep 10
-          ps auxwww | grep -i sql
-          
+      - run: which mysql
+      - run: mysql --version
+      - run: sudo systemctl status mysql.service || :
+      - run: sudo systemctl start mysql.service
+      - run: sudo systemctl status mysql.service || :
+      - run: sleep 1
+      - run: sudo systemctl status mysql.service || :
+      - run: sleep 1
+      - run: sudo systemctl status mysql.service || :
+      - run: ps auxwww | grep -i sql
+      - run: mysql -u root -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;"
