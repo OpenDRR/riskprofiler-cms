@@ -27,10 +27,28 @@ jobs:
         run: |
           sudo systemctl status mysql.service || :
           sudo systemctl start mysql.service
-          #echo -e "[client]\nuser=root\npassword=root" > ~/.my.cnf
-          #chmod 0600 ~/.my.cnf
           echo root | mysql_config_editor set --login-path=client --host=localhost --user=root --password
           mysql_config_editor print --all
 
       - run: mysql -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
 
+      - run: curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+      - run: |
+          php wp-cli.phar --info
+          chmod +x wp-cli.phar
+          sudo mv wp-cli.phar /usr/local/bin/wp
+          wp --info
+
+      - run: wp core download
+      - run: |
+          wp core config --dbname=mydbname --dbuser=mydbuser --dbpass=mydbpass --dbhost=localhost --dbprefix=whebfubwef_ --extra-php <<PHP
+          define( 'WP_DEBUG', true );
+          define( 'WP_DEBUG_LOG', true );
+          PHP
+      - run: wp db create
+      - run: wp core install --url=http://siteurl.com --title=SiteTitle --admin_user=username --admin_password=mypassword --admin_email=my@email.com
+      - run: wp plugin list
+
+      # https://docs.wp2static.com/en/getting-started/installation/#via-cli
+      - run: wp plugin install static-html-output-plugin --activate
