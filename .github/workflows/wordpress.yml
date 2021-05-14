@@ -28,9 +28,6 @@ jobs:
       - run: sudo systemctl status mysql.service || true
       - run: sudo systemctl start mysql.service
       - run: sudo systemctl status mysql.service || true
-      - run: sleep 1
-      - run: sudo systemctl status mysql.service || true
-      - run: sleep 1
-      - run: sudo systemctl status mysql.service || true
-      - run: ps auxwww | grep -i sql
+      - run: cat /etc/mysql/my.cnf
+      - run: mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
       - run: mysql -u root -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;"
