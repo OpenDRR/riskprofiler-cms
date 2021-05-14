@@ -27,4 +27,8 @@ jobs:
         run: |
           which mysql
           mysql --version
+          sudo systemctl status mysql.service || :
+          sudo systemctl start mysql.service
+          sleep 10
           ps auxwww | grep -i sql
+          
