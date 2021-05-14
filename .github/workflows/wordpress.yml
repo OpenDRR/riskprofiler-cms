@@ -23,14 +23,13 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - run: which mysql
-      - run: mysql --version
-      - run: sudo systemctl status mysql.service || true
-      - run: sudo systemctl start mysql.service
-      - run: sudo systemctl status mysql.service || true
-      - run: cat /etc/mysql/my.cnf
-      - run: sudo /usr/bin/mysql -u root -D mysql -e "update user set password=password('new-password') where user='root'" || true
-      - run: sudo /usr/bin/mysql -u root -e "flush privileges" || true
-      - run: sudo mysql -u root -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
+      - name: Start MySQL server
+        run: |
+          sudo systemctl status mysql.service || :
+          sudo systemctl start mysql.service
+          echo -e "[client]\nuser=root\npassword=root" > ~/.my.cnf
+          chmod 0600 ~/.my.cnf
+
       - run: sudo mysql -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
+      - run: sudo mysql -u root -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
       - run: mysql
