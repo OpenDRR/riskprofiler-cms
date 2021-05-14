@@ -42,13 +42,14 @@ jobs:
 
       - run: wp core download
       - run: |
-          wp core config --dbname=mydbname --dbuser=mydbuser --dbpass=mydbpass --dbhost=localhost --dbprefix=whebfubwef_ --extra-php <<PHP
+          wp core config --dbname=riskprofiler --dbuser=root --dbpass=root --dbhost=localhost --dbprefix=whebfubwef_ --extra-php <<PHP
           define( 'WP_DEBUG', true );
           define( 'WP_DEBUG_LOG', true );
           PHP
       - run: wp db create
-      - run: wp core install --url=http://siteurl.com --title=SiteTitle --admin_user=username --admin_password=mypassword --admin_email=my@email.com
+      - run: wp core install --url=https://riskprofiler.ca --title=RiskProfiler.ca --admin_user=username --admin_password=mypassword --admin_email=my@email.com
       - run: wp plugin list
 
       # https://docs.wp2static.com/en/getting-started/installation/#via-cli
       - run: wp plugin install static-html-output-plugin --activate
+      - run: wp plugin list
