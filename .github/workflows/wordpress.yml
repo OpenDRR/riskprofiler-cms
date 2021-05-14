@@ -25,12 +25,12 @@ jobs:
     steps:
       - run: which mysql
       - run: mysql --version
-      - run: sudo systemctl status mysql.service || :
+      - run: sudo systemctl status mysql.service || true
       - run: sudo systemctl start mysql.service
-      - run: sudo systemctl status mysql.service || :
+      - run: sudo systemctl status mysql.service || true
       - run: sleep 1
-      - run: sudo systemctl status mysql.service || :
+      - run: sudo systemctl status mysql.service || true
       - run: sleep 1
-      - run: sudo systemctl status mysql.service || :
+      - run: sudo systemctl status mysql.service || true
       - run: ps auxwww | grep -i sql
       - run: mysql -u root -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;"
