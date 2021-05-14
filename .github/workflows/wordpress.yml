@@ -32,6 +32,5 @@ jobs:
           echo root | mysql_config_editor set --login-path=client --host=localhost --user=root --password
           mysql_config_editor print --all
 
-      - run: sudo mysql -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
-      - run: sudo mysql -u root -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
-      - run: mysql
+      - run: mysql -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
+
