@@ -29,8 +29,8 @@ jobs:
       - run: sudo systemctl start mysql.service
       - run: sudo systemctl status mysql.service || true
       - run: cat /etc/mysql/my.cnf
-      - run: /usr/bin/mysql -u root -D mysql -e "update user set password=password('new-password') where user='root'" || true
-      - run: /usr/bin/mysql -u root -e "flush privileges" || true
-      - run: mysql -u root -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
-      - run: mysql -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
+      - run: sudo /usr/bin/mysql -u root -D mysql -e "update user set password=password('new-password') where user='root'" || true
+      - run: sudo /usr/bin/mysql -u root -e "flush privileges" || true
+      - run: sudo mysql -u root -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
+      - run: sudo mysql -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;" || true
       - run: mysql
