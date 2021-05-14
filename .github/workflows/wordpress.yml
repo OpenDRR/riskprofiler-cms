@@ -29,5 +29,6 @@ jobs:
       - run: sudo systemctl start mysql.service
       - run: sudo systemctl status mysql.service || true
       - run: cat /etc/mysql/my.cnf
-      - run: mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
+      - run: /usr/bin/mysql -u root -D mysql -e "update user set password=password('new-password') where user='root'"
+      - run: /usr/bin/mysql -u root -e "flush privileges"
       - run: mysql -u root -e "SHOW DATABASES; CREATE DATABASE opendrr; SHOW DATABASES;"
