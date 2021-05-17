@@ -9,8 +9,8 @@
 
 <channel>
 	<title>admin &#8211; RiskProfiler</title>
-	<atom:link href="/author/admin/feed/" rel="self" type="application/rss+xml" />
-	<link>/</link>
+	<atom:link href="./index.html" rel="self" type="application/rss+xml" />
+	<link>./../../../index.html</link>
 	<description>Just another WordPress site</description>
 	<lastBuildDate>Fri, 14 May 2021 23:55:04 +0000</lastBuildDate>
 	<language>en-US</language>
@@ -21,20 +21,20 @@
 	<generator>https://wordpress.org/?v=5.7.2</generator>
 	<item>
 		<title>Hello world!</title>
-		<link>/2021/05/14/hello-world/</link>
-					<comments>/2021/05/14/hello-world/#comments</comments>
+		<link>./../../../2021/05/14/hello-world/index.html</link>
+					<comments>./../../../2021/05/14/hello-world/index.html#comments</comments>
 		
 		<dc:creator><![CDATA[admin]]></dc:creator>
 		<pubDate>Fri, 14 May 2021 23:55:04 +0000</pubDate>
 				<category><![CDATA[Uncategorized]]></category>
-		<guid isPermaLink="false">/?p=1</guid>
+		<guid isPermaLink="false">./../../../index.html?p=1</guid>
 
 					<description><![CDATA[Welcome to WordPress. This is your first post. Edit or delete it, then start writing!]]></description>
 										<content:encoded><![CDATA[
 <p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>
 ]]></content:encoded>
 					
-					<wfw:commentRss>/2021/05/14/hello-world/feed/</wfw:commentRss>
+					<wfw:commentRss>./../../../2021/05/14/hello-world/feed/index.html</wfw:commentRss>
 			<slash:comments>1</slash:comments>
 		
 		
