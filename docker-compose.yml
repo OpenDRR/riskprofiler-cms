@@ -17,7 +17,8 @@ services:
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: "${DB_ROOT_PASSWORD}"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     links:
       - db
 
@@ -33,9 +34,17 @@ services:
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: "${DB_ROOT_PASSWORD}"
     depends_on:
-      - db
-      - wp
-    command: "wp plugin activate simply-static"
+      db:
+        condition: service_healthy
+      wp:
+        condition: service_started
+    command: |
+      echo "wpcli commands:" &&
+      echo "$URL" &&
+      echo 'wp core config --dbname="$WORDPRESS_DB_NAME" --dbuser="$WORDPRESS_DB_USER" --dbpass="$WORDPRESS_DB_PASSWORD" --dbhost="$WORDPRESS_DB_HOST"' &&
+      wp db create
+      && wp core install --url="$URL" --title="$TITLE" --admin_user="$WP_ADMIN_USER" --admin_password="$WP_ADMIN_PASSWORD" --admin_email="$WP_ADMIN_EMAIL"
+      && wp plugin activate simply-static
 
   pma:
     image: phpmyadmin/phpmyadmin
@@ -64,6 +73,10 @@ services:
     environment:
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 100
 
 volumes:
   db_data:
