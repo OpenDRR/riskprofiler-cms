@@ -467,10 +467,10 @@ var charts_to_process = [],
 
 			// GET SCENARIO LIST
 
-			console.log(plugin_settings.lang_prepend + '/scenario')
+			console.log(plugin_settings.lang_prepend + '/scenario/index.html')
 
 			$(document).profiler('get_sidebar', {
-				url: plugin_settings.lang_prepend + '/scenario',
+				url: plugin_settings.lang_prepend + '/scenario/index.html',
 				success: function(data) {
 
 					// GEOJSON
@@ -803,7 +803,7 @@ var charts_to_process = [],
 				plugin_instance.do_breadcrumb('init')
 
 				$(document).profiler('get_sidebar', {
-					url: plugin_settings.lang_prepend + '/scenario',
+					url: plugin_settings.lang_prepend + '/scenario/index.html',
 					before: function() {
 
 						plugin_settings.current_view = 'init'
