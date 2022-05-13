@@ -1,4 +1,4 @@
-const geoapi_url = 'https://geo-api.stage.riskprofiler.ca'
+const geoapi_url = 'https://geo-api.riskprofiler.ca'
 const elastic_url = 'https://riskprofiler.ca'
 
 // var feature_index = "opendrr_dsra_sim9p0_cascadiainterfacebestfault_indicators_s",
@@ -467,10 +467,10 @@ var charts_to_process = [],
 
 			// GET SCENARIO LIST
 
-			console.log(plugin_settings.lang_prepend + '/scenario/index.html')
+			console.log('..' + plugin_settings.lang_prepend + '/scenario/index.html')
 
 			$(document).profiler('get_sidebar', {
-				url: plugin_settings.lang_prepend + '/scenario/index.html',
+				url: '..' + plugin_settings.lang_prepend + '/scenario/index.html',
 				success: function(data) {
 
 					// GEOJSON
@@ -803,7 +803,7 @@ var charts_to_process = [],
 				plugin_instance.do_breadcrumb('init')
 
 				$(document).profiler('get_sidebar', {
-					url: plugin_settings.lang_prepend + '/scenario/index.html',
+					url: '..' + plugin_settings.lang_prepend + '/scenario/index.html',
 					before: function() {
 
 						plugin_settings.current_view = 'init'
@@ -1924,7 +1924,7 @@ var charts_to_process = [],
 					retryLimit : 3,
 					crossDomain: true,
 					headers: { "content-type": "application/json" },
-					url: 'https://api.stage.riskprofiler.ca/opendrr_dsra_' + plugin_settings.scenario.key.toLowerCase() + '_indicators_b/_search',
+					url: 'https://api.riskprofiler.ca/opendrr_dsra_' + plugin_settings.scenario.key.toLowerCase() + '_indicators_b/_search',
 					data: JSON.stringify(request_data),
 					success: function(data) {
 
@@ -2013,7 +2013,7 @@ var charts_to_process = [],
 			function doit(url = null) {
 
 				if (url == null) {
-					url = 'https://geo-api.stage.riskprofiler.ca/collections/opendrr_dsra_' + scenarios[0].toLowerCase() + '_indicators_csd/items?lang=en_US&f=json&limit=2000'
+					url = 'https://geo-api.riskprofiler.ca/collections/opendrr_dsra_' + scenarios[0].toLowerCase() + '_indicators_csd/items?lang=en_US&f=json&limit=2000'
 				}
 
 				console.log(url)

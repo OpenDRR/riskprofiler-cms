@@ -127,10 +127,10 @@
 
 			var ajax_url
 
-			if (settings.url.charAt(0) == '/' || settings.url.indexOf('http') !== -1) {
+			if (settings.url.charAt(0) == '/' || settings.url.charAt(0) == '.' || settings.url.indexOf('http') !== -1) {
 				ajax_url = settings.url
 			} else {
-				ajax_url = '/site/assets/themes/fw-child/template/' + settings.url
+				ajax_url = '../site/assets/themes/fw-child/template/' + settings.url
 			}
 
 			console.log('get ' + ajax_url)
