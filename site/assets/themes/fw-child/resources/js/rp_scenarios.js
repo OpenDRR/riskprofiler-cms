@@ -1,6 +1,6 @@
 const geoapi_url = 'https://geo-api.stage.riskprofiler.ca'
 const pbf_url = 'https://riskprofiler.ca'
-const api_url = 'https://api.riskprofiler.ca';
+const api_url = 'https://api.stage.riskprofiler.ca';
 
 // scenario profiler
 // v1.0
@@ -1772,7 +1772,7 @@ const api_url = 'https://api.riskprofiler.ca';
 					retryLimit : 3,
 					crossDomain: true,
 					headers: { "content-type": "application/json" },
-					url: api_url + '/opendrr_dsra_' + plugin_settings.scenario.key.toLowerCase() + '_indicators_b_v' + plugin_settings.api.version + '/_search',
+					url: api_url + '/opendrr_dsra_' + plugin_settings.scenario.key.toLowerCase() + '_indicators_b' + '/_search',
 					data: JSON.stringify(request_data),
 					success: function(data) {
 
