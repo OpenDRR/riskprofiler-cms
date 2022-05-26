@@ -1959,7 +1959,12 @@ const api_url = 'https://api.stage.riskprofiler.ca';
 
 				// SHAKEMAP
 
-				pbf_key += '_shakemap_hexbin_' + aggregation.agg
+				// Temporary workaround as we transition from "hexbin" to "hexgrid"
+				if (aggregation.agg == '5km') {
+					pbf_key += '_shakemap_hexbin_' + aggregation.agg
+				} else {
+					pbf_key += '_shakemap_hexgrid_' + aggregation.agg
+				}
 
 				feature_ID_key = 'gridid_1'
 
