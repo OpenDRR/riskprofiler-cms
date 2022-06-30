@@ -511,7 +511,7 @@ var z = 0
 			// console.log(plugin_settings.sidebar.items)
 
 			$(document).profiler('get_sidebar', {
-				url: plugin_settings.lang_prepend + '/community',
+				url: (plugin_settings.lang_prepend ? '../..' : '..') + plugin_settings.lang_prepend + '/community/index.html',
 				success: function(data) {
 
 				},

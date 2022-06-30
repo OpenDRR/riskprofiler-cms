@@ -1,6 +1,6 @@
 const geoapi_url = 'https://geo-api.riskprofiler.ca'
 const pbf_url = 'https://riskprofiler.ca'
-const api_url = 'https://api.stage.riskprofiler.ca'
+const api_url = 'https://api.riskprofiler.ca'
 
 var z = 0
 
@@ -2048,12 +2048,7 @@ var csd_temp, s_temp
 
 				// SHAKEMAP
 
-				// Temporary workaround as we transition from "hexbin" to "hexgrid"
-				if (aggregation.agg == '5km') {
-					pbf_key += '_shakemap_hexbin_' + aggregation.agg
-				} else {
-					pbf_key += '_shakemap_hexgrid_' + aggregation.agg
-				}
+				pbf_key += '_shakemap_hexbin_' + aggregation.agg
 
 				feature_ID_key = 'gridid_1'
 
@@ -2500,7 +2495,7 @@ var csd_temp, s_temp
 						retryLimit : 3,
 						crossDomain: true,
 						headers: { "content-type": "application/json" },
-						url: api_url + '/opendrr_dsra_' + plugin_settings.scenario.key.toLowerCase() + '_indicators_b' + '/_search',
+						url: api_url + '/opendrr_dsra_' + plugin_settings.scenario.key.toLowerCase() + '_indicators_b_v' + plugin_settings.api.version + '/_search',
 						data: JSON.stringify(request_data),
 						success: function(data) {
 
