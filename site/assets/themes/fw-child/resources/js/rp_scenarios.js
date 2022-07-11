@@ -1,10 +1,8 @@
-const geoapi_url = 'https://geo-api.riskprofiler.ca'
-const pbf_url = 'https://riskprofiler.ca'
-const api_url = 'https://api.riskprofiler.ca'
-
 var z = 0
 
 var csd_temp, s_temp
+
+var grades, color_ramp
 
 // scenario profiler
 // v1.0
@@ -44,7 +42,6 @@ var csd_temp, s_temp
 				object: null,
 				legend: null,
 				offset: $('.app-sidebar').outerWidth(),
-				geojson: null,
 				panes: [],
 				layers: {
 					bbox: null,
@@ -596,17 +593,63 @@ var csd_temp, s_temp
 			legend: {
 				max: 0,
         grades: [],
-				colors: [
-					'#ffffcc',
-					'#ffeda0',
-					'#fed976',
-					'#feb24c',
-					'#fd8d3c',
-					'#fc4e2a',
-					'#e31a1c',
-					'#bd0026',
-					'#800026'
-				]
+				colors: {
+					shake: [
+						'#ffffcc',
+						'#ffeda0',
+						'#fed976',
+						'#feb24c',
+						'#fd8d3c',
+						'#fc4e2a',
+						'#e31a1c',
+						'#bd0026',
+						'#800026',
+					],
+					default: [
+						'#F5F4CC',
+						'#F2E7C3',
+						'#F0DABA',
+						'#EECDB1',
+						'#EBC0A8',
+						'#E9B39F',
+						'#E7A696',
+						'#E59A8D',
+						'#E28D84',
+						'#E0807B',
+						'#DE7373',
+						'#DC666A',
+						'#D95961',
+						'#D74D58',
+						'#D5404F',
+						'#D33346',
+						'#D0263D',
+						'#CE1934',
+						'#CC0C2B',
+						'#CA0023'
+					],
+					green: [
+						'#F7F4F1',
+						'#F2F1EB',
+						'#EEEFE5',
+						'#E9EDDF',
+						'#E5EAD9',
+						'#E0E8D4',
+						'#DCE6CE',
+						'#D8E3C8',
+						'#D3E1C2',
+						'#CFDFBC',
+						'#CADCB7',
+						'#C6DAB1',
+						'#C1D8AB',
+						'#BDD5A5',
+						'#B9D39F',
+						'#B4D19A',
+						'#B0CE94',
+						'#ABCC8E',
+						'#A7CA88',
+						'#A3C883'
+					]
+				}
 			},
 			colors: {
 				marker: '#8b0707',
@@ -666,47 +709,45 @@ var csd_temp, s_temp
 				zoomControl: false,
 				maxZoom: 15,
 				crs: L.CRS.EPSG900913,
-				dragging: !L.Browser.mobile
+				// dragging: !L.Browser.mobile
 			}).setView(plugin_settings.map.defaults.coords, plugin_settings.map.defaults.zoom)
 
-			// plugin_settings.map.object.on('fullscreenchange', function () {
-			// 	plugin_settings.map.object.invalidateSize()
-			// })
+			var map = plugin_settings.map.object
 
 			// CONTROLS
 
 			L.control.zoom({
 				position: 'topright'
-			}).addTo(plugin_settings.map.object);
+			}).addTo(map)
 
 			// PANES
 
-			plugin_settings.map.panes.basemap = plugin_settings.map.object.createPane('basemap')
+			plugin_settings.map.panes.basemap = map.createPane('basemap')
 			plugin_settings.map.panes.basemap.style.zIndex = 399
 			plugin_settings.map.panes.basemap.style.pointerEvents = 'none'
 
 			// bbox - for scenario bounding box
-			plugin_settings.map.panes.bbox = plugin_settings.map.object.createPane('bbox')
+			plugin_settings.map.panes.bbox = map.createPane('bbox')
 			plugin_settings.map.panes.bbox.style.zIndex = 540
 			plugin_settings.map.panes.bbox.style.pointerEvents = 'none'
 
 			// markers - for scenario markers and clusters
-			plugin_settings.map.panes.markers = plugin_settings.map.object.createPane('markers')
+			plugin_settings.map.panes.markers = map.createPane('markers')
 			plugin_settings.map.panes.markers.style.zIndex = 550
 			plugin_settings.map.panes.markers.style.pointerEvents = 'all'
 
 			// data - for geojson layers
-			plugin_settings.map.panes.data = plugin_settings.map.object.createPane('data')
+			plugin_settings.map.panes.data = map.createPane('data')
 			plugin_settings.map.panes.data.style.zIndex = 560
 			plugin_settings.map.panes.data.style.pointerEvents = 'all'
 
 			// shakemap - for shakemap data
-			plugin_settings.map.panes.shakemap = plugin_settings.map.object.createPane('shakemap')
+			plugin_settings.map.panes.shakemap = map.createPane('shakemap')
 			plugin_settings.map.panes.shakemap.style.zIndex = 560
 			plugin_settings.map.panes.shakemap.style.pointerEvents = 'all'
 
 			// epicenter - for selected scenario epicenter
-			plugin_settings.map.panes.epicenter = plugin_settings.map.object.createPane('epicenter')
+			plugin_settings.map.panes.epicenter = map.createPane('epicenter')
 			plugin_settings.map.panes.epicenter.style.zIndex = 570
 			plugin_settings.map.panes.epicenter.style.pointerEvents = 'none'
 			plugin_settings.map.panes.epicenter.style.display = 'none'
@@ -720,8 +761,9 @@ var csd_temp, s_temp
 
 			plugin_settings.map.epicenter = L.marker([55,-105], {
 				icon: pulsingIcon,
+				interactive: false,
 				pane: 'epicenter'
-			}).addTo(plugin_settings.map.object)
+			}).addTo(map)
 
 			// LEGEND
 
@@ -729,29 +771,34 @@ var csd_temp, s_temp
 
 			plugin_settings.map.legend.onAdd = function () {
 
-				// console.log(plugin_settings.indicator, plugin_settings.legend)
+				// console.log('add legend', plugin_settings.indicator, plugin_settings.legend)
 
 				var div = L.DomUtil.create('div', 'info legend'),
-						legend = plugin_settings.indicator.legend,
-						grades = [].concat(plugin_settings.legend.grades).reverse(),
+						grades = plugin_settings.legend.grades,
+						indicator = plugin_settings.indicator,
+						legend = indicator.legend,
 						prepend = legend.prepend,
 						append = legend.append,
-						aggregation = plugin_settings.indicator.aggregation,
+						aggregation = indicator.aggregation,
 						current_agg = plugin_settings.aggregation.current.agg
 
-				switch (aggregation[current_agg]['rounding']) {
-					case -9 :
-						append = 'billion ' + append
-						break
-					case -6 :
-						append = 'million ' + append
-						break
-					case -3 :
-						append = 'thousand ' + append
-						break
+				if (indicator.type != 'dollars') {
+
+					switch (aggregation[current_agg]['rounding']) {
+						case -9 :
+							append = 'billion ' + append
+							break
+						case -6 :
+							append = 'million ' + append
+							break
+						case -3 :
+							append = 'thousand ' + append
+							break
+					}
+
 				}
 
-				legend_markup = '<h6>' + plugin_settings.indicator.label + '</h6>'
+				legend_markup = '<h6>' + indicator.label + '</h6>'
 
 				// loop through our density intervals and generate a label with a colored square for each interval
 
@@ -759,19 +806,37 @@ var csd_temp, s_temp
 
 				for (var i = 1; i <= grades.length; i++) {
 
+					var this_val = plugin._round(grades[i - 1], aggregation[current_agg]['rounding']).toLocaleString(undefined, {
+							maximumFractionDigits: aggregation[current_agg]['decimals']
+						})
+
+					if (indicator.type == 'dollars') {
+
+						this_val = plugin._round_scale(grades[i - 1])
+
+					}
+
 					var row_markup = '<div class="legend-item" data-toggle="tooltip" data-placement="top" style="background-color: '
-            + plugin_settings.legend.colors[i - 1] + ';"'
+            + color_ramp[i - 1] + ';"'
 						+ ' title="'
 						+ prepend
-						+ plugin._round(grades[i - 1], aggregation[current_agg]['rounding']).toLocaleString(undefined, {
-								maximumFractionDigits: aggregation[current_agg]['decimals']
-							})
+						+ this_val
 
 					if (grades[i]) {
 
+						var next_val = plugin._round(grades[i], aggregation[current_agg]['rounding']).toLocaleString(undefined, {
+								maximumFractionDigits: aggregation[current_agg]['decimals']
+							})
+
+						if (indicator.type == 'dollars') {
+
+							next_val = plugin._round_scale(grades[i])
+
+						}
+
 						row_markup += ' – '
 							+ prepend
-							+ plugin._round(grades[i], aggregation[current_agg]['rounding']).toLocaleString(undefined, { maximumFractionDigits: aggregation[current_agg]['decimals'] })
+							+ next_val
 							+ ' '
 							+ append
 
@@ -797,17 +862,25 @@ var csd_temp, s_temp
 
 			// BASEMAP
 
-			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-					pane: 'basemap',
-			    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-		      detectRetina: true
-			}).addTo(plugin_settings.map.object)
+			var basemap_URL = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+					basemap_att = 'Map data © 2022 Google | <a href="https://www.google.com/intl/en-CA_US/help/terms_maps/" target="_blank">Terms of use</a>'
+
+			if ($('body').hasClass('lang-fr')) {
+				basemap_URL += '&hl=fr'
+				basemap_att = 'Map data © 2022 Google | <a href="https://www.google.com/intl/en-CA_US/help/terms_maps/" target="_blank">Terms of use</a>'
+			}
+
+			L.tileLayer(basemap_URL, {
+				pane: 'basemap',
+		    attribution: basemap_att,
+	      detectRetina: true
+			}).addTo(map)
 
 			// L.tileLayer( 'https://osm-{s}.gs.mil/tiles/default_pc/{z}/{x}/{y}.png', {
 	    //   subdomains: '1234',
 	    //   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 	    //   detectRetina: true
-			// }).addTo(plugin_settings.map.object)
+			// }).addTo(map)
 
 			// CLUSTERS
 
@@ -835,16 +908,16 @@ var csd_temp, s_temp
 				pane: 'data'
 			})
 
-			plugin_settings.map.object.on('popupopen', function(e) {
+			map.on('popupopen', function(e) {
 
 				// console.log('open', e.popup._source)
 
 			})
 
-			plugin_settings.map.object.on('popupclose', function(e) {
+			map.on('popupclose', function(e) {
 
 				if (
-					plugin_settings.map.object.hasLayer(plugin_settings.map.layers.tiles)
+					map.hasLayer(plugin_settings.map.layers.tiles)
 				) {
 
 					var feature_deselected = false
@@ -891,10 +964,6 @@ var csd_temp, s_temp
 			// FILTER
 			//
 
-			// $(document).profiler('get_controls', 'scenarios')
-
-			// $('.app-controls .control-toggle').click(function() {})
-
 			// CHARTS
 
 			$('.app-main').addClass('charts-on')
@@ -940,12 +1009,10 @@ var csd_temp, s_temp
 
 					})
 
-					plugin_settings.map.geojson = [{
+					plugin_settings.map.markers = L.geoJSON([{
 						"type": "FeatureCollection",
 						"features": features
-					}]
-
-					plugin_settings.map.markers = L.geoJSON(plugin_settings.map.geojson, {
+					}], {
 						onEachFeature: function(feature, layer) {
 
 							if (typeof feature !== 'undefined') {
@@ -1013,7 +1080,7 @@ var csd_temp, s_temp
 						}
 					})
 
-					plugin_settings.map.object.addLayer(plugin_settings.map.clusters)
+					map.addLayer(plugin_settings.map.clusters)
 
 					if (window.location.hash) {
 
@@ -1097,7 +1164,6 @@ var csd_temp, s_temp
 						type: 'column',
 				    height: 250,
 						marginTop: 30,
-						marginLeft: 60,
 						styledMode: true
 					},
 					title: {
@@ -1241,9 +1307,9 @@ var csd_temp, s_temp
 			//
 
 			// adjust aggregation on zoom
-			plugin_settings.map.object.on('zoomend dragend', function (e) {
+			map.on('zoomend dragend', function (e) {
 
-				// console.log('zoom drag', plugin_settings.map.object.getZoom())
+				// console.log('zoom drag', map.getZoom())
 
 				if (plugin_settings.current_view == 'detail') {
 
@@ -1312,7 +1378,7 @@ var csd_temp, s_temp
 
   				// close popup
 
-  				plugin_settings.map.object.closePopup()
+  				map.closePopup()
 
 					// reset chart data
 					$('.chart-container').attr('data-series', '')
@@ -1358,7 +1424,7 @@ var csd_temp, s_temp
 						$('.leaflet-data-pane path').remove()
 						$('.leaflet-shakemap-pane path').remove()
 
-						plugin_settings.map.object.removeLayer(plugin_settings.map.layers.tiles)
+						map.removeLayer(plugin_settings.map.layers.tiles)
 
 						plugin_settings.map.layers.tiles = null
 						plugin_settings.map.layers.shake_grid = null
@@ -1368,13 +1434,13 @@ var csd_temp, s_temp
 						plugin_settings.map.legend.remove()
 
 						// reset the map view
-						plugin_settings.map.object.setView(
+						map.setView(
 							plugin_settings.map.defaults.coords,
 							plugin_settings.map.defaults.zoom
 						)
 
 						// close popups
-						plugin_settings.map.object.closePopup()
+						map.closePopup()
 
 						// hide epicenter
 						plugin_settings.map.panes.epicenter.style.display = 'none'
@@ -1457,7 +1523,7 @@ var csd_temp, s_temp
 						// $(this).find('span').text('off')
 					}
 
-					plugin_settings.map.object.closePopup()
+					map.closePopup()
 
 					if (plugin_settings.current_view == 'detail') {
 						plugin.get_layer()
@@ -1626,7 +1692,7 @@ var csd_temp, s_temp
 
 			// reset the sort/filter
 			$('body').find('.controls-search input').val('')
-			$('body').find('.sort-item').removeClass('selected').attr('data-sort-order-', 'asc').first().addClass('selected')
+			$('body').find('.sort-item').removeClass('selected').attr('data-sort-order', 'asc').first().addClass('selected')
 
 			// set param values for initial view
 
@@ -1710,7 +1776,9 @@ var csd_temp, s_temp
 				scenario: null
 			}, fn_options)
 
-			// console.log('bounds', settings.scenario.key)
+			var map = plugin_settings.map.object
+
+			// console.log('bounds', settings.scenario)
 
 			if (settings.scenario != null) {
 
@@ -1720,12 +1788,6 @@ var csd_temp, s_temp
 
 				plugin_settings.map.panes.bbox.style.display = ''
 
-				// remove existing
-
-				if (plugin_settings.map.layers.bbox) {
-					plugin_settings.map.object.removeLayer(plugin_settings.map.layers.bbox)
-				}
-
 				$.ajax({
 					url: 'https://geo-api.riskprofiler.ca/collections/opendrr_shakemap_scenario_extents/items/' + settings.scenario.key,
 					data: {
@@ -1734,6 +1796,10 @@ var csd_temp, s_temp
 					dataType: 'json',
 					success: function(bounds) {
 
+						// remove existing
+
+						if (map.hasLayer(plugin_settings.map.layers.bbox)) map.removeLayer(plugin_settings.map.layers.bbox)
+
 						plugin_settings.map.layers.bbox = L.geoJSON(bounds, {
 							style: {
 								fillColor: '#d90429',
@@ -1741,16 +1807,14 @@ var csd_temp, s_temp
 								weight: 0
 							},
 							pane: 'bbox'
-						})
+						}).addTo(map)
 
-						plugin_settings.map.object
-							.addLayer(plugin_settings.map.layers.bbox)
-							.fitBounds(
-								plugin_settings.map.layers.bbox.getBounds(),
-								{
-									paddingTopLeft: [$(window).outerWidth() / 4, 0]
-								}
-							)
+						map.fitBounds(
+							plugin_settings.map.layers.bbox.getBounds(),
+							{
+								paddingTopLeft: [$(window).outerWidth() / 4, 0]
+							}
+						)
 
 					}
 				})
@@ -1865,7 +1929,7 @@ var csd_temp, s_temp
 	        plugin_settings.aggregation.current.bbox == true*/
 	      ) {
 
-					console.log('fetch')
+					// console.log('fetch')
 
 	        // RESET MAP FEATURES
 
@@ -1903,7 +1967,7 @@ var csd_temp, s_temp
 
 			$('#spinner-progress').text('Retrieving scenario data')
 
-			console.log('get max vals', plugin_settings.indicator.max)
+			// console.log('get max vals', plugin_settings.indicator.max)
 
 			// set bounds by the scenario meta
       var bounds = L.latLngBounds(L.latLng(
@@ -1924,13 +1988,15 @@ var csd_temp, s_temp
 			if (plugin_settings.indicator.key !== 'sH_PGA') {
 
 				// if max values for this indicator have not been generated
+				// OR
+				// we're swapping between aggregations
 
 				if (
 					plugin_settings.indicator.max.csd == 0 &&
 					plugin_settings.indicator.max.s == 0
 				) {
 
-					console.log('maxes are 0, get new ones')
+					// console.log('maxes are 0, get new ones')
 
 					// get the csd max
 
@@ -1991,7 +2057,7 @@ var csd_temp, s_temp
 
 			} else {
 
-				console.log('shake, get tiles now')
+				// console.log('shake, get tiles now')
 				plugin.get_tiles()
 
 			}
@@ -1999,7 +2065,7 @@ var csd_temp, s_temp
 
 		get_tiles: function(fn_options) {
 
-			console.log('get tiles')
+			// console.log('get tiles')
 
       var plugin = this
       var plugin_settings = plugin.options
@@ -2015,7 +2081,7 @@ var csd_temp, s_temp
 
 			if (map.hasLayer(csd_temp)) map.removeLayer(csd_temp)
 			if (map.hasLayer(s_temp)) map.removeLayer(s_temp)
-			if (map.hasLayer(plugin_settings.map.layers.tiles)) map.removeLayer(plugin_settings.map.layers.tiles)
+			// if (map.hasLayer(plugin_settings.map.layers.tiles)) map.removeLayer(plugin_settings.map.layers.tiles)
 
 			// show the data pane
 
@@ -2033,9 +2099,6 @@ var csd_temp, s_temp
 
 			// set tile vars
 
-			var pbf_key = 'dsra_'
-				+ plugin_settings.scenario.key.toLowerCase()
-
 			var	indicator_key = plugin_settings.indicator.key,
 					aggregation = plugin_settings.aggregation.current,
 					feature_ID_key
@@ -2044,11 +2107,20 @@ var csd_temp, s_temp
 
 			var max_val = plugin_settings.indicator.max[aggregation.agg]
 
+			var tile_url = {
+				collection: 'dsra_' + plugin_settings.scenario.key.toLowerCase() + '_',
+				aggregation: aggregation.agg,
+				version: '1.4.0',
+				projection: 'EPSG_900913'
+			}
+
+			// console.log('getting tiles now at ' + aggregation.agg + ' and max val ' + max_val)
+
 			if (plugin_settings.indicator.key == 'sH_PGA') {
 
 				// SHAKEMAP
 
-				pbf_key += '_shakemap_hexbin_' + aggregation.agg
+				tile_url.collection += 'shakemap_hexbin'
 
 				feature_ID_key = 'gridid_1'
 
@@ -2062,7 +2134,8 @@ var csd_temp, s_temp
 
 				// INDICATOR
 
-				pbf_key += '_indicators_' + aggregation.agg
+				tile_url.collection += 'indicators'
+
 				feature_ID_key = aggregation.prop
 
 				indicator_key += ((plugin_settings.indicator.retrofit !== false) ? '_' + plugin_settings.api.retrofit : '')
@@ -2071,196 +2144,172 @@ var csd_temp, s_temp
 
 			z = 0
 
-			// load the tiles
+			// figure out what to do with the color ramp
 
-      plugin_settings.map.layers.tiles = L.vectorGrid.protobuf(
-				pbf_url + '/' + pbf_key + '/EPSG_900913/{z}/{x}/{y}.pbf',
-				{
-		      rendererFactory: L.canvas.tile,
+			plugin_settings.legend.grades = []
+
+			if (plugin_settings.indicator.legend.values) {
+
+				// if the indicator has custom legend scales,
+				// use that for the current aggregation
+
+				plugin_settings.legend.grades = plugin_settings.indicator.legend.values[plugin_settings.aggregation.current.agg]
+
+				// console.log('custom grades', plugin_settings.legend.grades)
+
+			} else {
+
+				// use the calculated max value to generate the ramp
+
+				var legend_steps = 20,
+						legend_step = 0
+
+				legend_step = max_val / legend_steps
+
+				for (i = 1; i <= legend_steps; i += 1) {
+					plugin_settings.legend.grades.unshift(max_val - (legend_step * i))
+				}
+
+				// console.log('calculated grades', plugin_settings.legend.grades)
+
+			}
+
+			// get the selected color ramp array
+
+			color_ramp = plugin_settings.legend.colors[plugin_settings.indicator.legend.color]
+
+			// match up the lengths of the grade and color array
+
+			if (color_ramp.length > plugin_settings.legend.grades.length) {
+
+				var new_ramp = [ color_ramp[0] ]
+
+				var length_mismatch = (color_ramp.length - 2) / (plugin_settings.legend.grades.length - 2)
+
+				for (i = 0; i < color_ramp.length - 2; i += length_mismatch) {
+					// console.log(i, Math.floor(i + length_mismatch), color_ramp[Math.floor(i + length_mismatch)])
+					new_ramp.push(color_ramp[Math.floor(i + length_mismatch)])
+				}
+
+				new_ramp.push(color_ramp[color_ramp.length - 1])
+
+				color_ramp = new_ramp
+
+			}
+
+			$(document).profiler('get_tiles', {
+				map: map,
+				url: tile_url,
+				indicator: plugin_settings.indicator,
+				aggregation: plugin_settings.aggregation,
+				tiles: plugin_settings.map.layers.tiles,
+				options: {
 					pane: 'data',
-		      interactive: true,
 		      getFeatureId: function(feature) {
 		        return feature.properties[feature_ID_key]
 		      },
-		      bounds: bounds,
-		      vectorTileLayerStyles: plugin.set_shake_styles(pbf_key, indicator_key)
-		    }
-			).on('load', function(e) {
+					bounds: bounds,
+		      vectorTileLayerStyles: plugin.choro_style(tile_url.collection + '_' + aggregation.agg, indicator_key)
+				},
+				functions: {
+					add: function(e) {
 
-			}).on('add', function(e) {
+						// set the tile var to the new layer that was created
+						plugin_settings.map.layers.tiles = e.target
 
-				// console.log('get_tiles on add')
+						plugin_settings.map.legend.addTo(plugin_settings.map.object)
 
-				// if retrofit is OFF and
+						$('body').find('.legend-item').tooltip()
 
-				if (
-					plugin_settings.api.retrofit == 'b0'
-				) {
+						// update breadcrumb
 
-					// don't round here, use the full values
-					// for setting legend grades
-					// and choro colours
+						$('.app-breadcrumb').find('#breadcrumb-scenario-indicator').text(plugin_settings.indicator.label)
 
-					// var rounding = plugin_settings.indicator.aggregation[plugin_settings.aggregation.current.agg]['rounding']
+					},
+					mouseover: function(e) {
 
-					if (plugin_settings.indicator.key == 'sH_PGA') {
+						if (!$('.app-main').hasClass('feature-selected')) {
 
-						plugin_settings.legend.grades = [].concat(plugin_settings.indicator.legend.values).reverse()
+							// set the popup content
 
-					} else {
+							plugin_settings.map.popup.setContent(plugin.popup_content(e.layer.properties, indicator_key))
+				        .setLatLng(e.latlng)
+				        .openOn(map)
 
-						// console.log('max val', max_val)
+						}
 
-						var legend_steps = 9,
-								legend_step = 0
+					},
+					mouseout: function(e) {
 
-						plugin_settings.legend.grades = []
+						if (!$('.app-main').hasClass('feature-selected')) {
+							map.closePopup()
+						}
 
-						// console.log('legend max', max_val)
+					},
+					click: function(e) {
 
-						legend_step = max_val / legend_steps
+						L.DomEvent.stop(e)
 
-						// console.log('step', legend_step)
+		        // if we have a selected feature, reset the style
+		        if (plugin_settings.map.selected_feature != null) {
+		          plugin_settings.map.layers.tiles.resetFeatureStyle(plugin_settings.map.selected_feature)
+		        }
 
-						for (i = 1; i <= legend_steps; i += 1) {
-							// console.log(i, max_val - (legend_step * i))
-							plugin_settings.legend.grades.push(max_val - (legend_step * i))
+						$('.app-main').addClass('feature-selected')
+
+		        // set the selected feature id
+		        plugin_settings.map.selected_feature = e.layer.properties[feature_ID_key]
+
+		        // set the selected feature style
+		        plugin_settings.map.layers.tiles.setFeatureStyle(plugin_settings.map.selected_feature, {
+		          fill: true,
+							fillColor: '#9595a0',
+							color: '#2b2c42',
+		          weight: 0.8,
+		          fillOpacity: 0.5
+		        })
+
+		        // set the popup content
+		        plugin_settings.map.popup.setContent(plugin.popup_content(e.layer.properties, indicator_key))
+			        .setLatLng(e.latlng)
+			        .openOn(map)
+
+						// update charts if necessary
+
+						if (
+							plugin_settings.charts.enabled == true &&
+							plugin_settings.indicator.key !== 'sH_PGA'
+						) {
+							plugin.get_charts()
 						}
 
 					}
-
-					console.log('new legend', plugin_settings.legend)
-
-					plugin_settings.map.legend.addTo(plugin_settings.map.object)
-
-					$('body').find('.legend-item').tooltip()
-
 				}
-
-				// update breadcrumb
-
-				$('.app-breadcrumb').find('#breadcrumb-scenario-indicator').text(plugin_settings.indicator.label)
-
-			}).on('mouseover', function(e) {
-
-				if (!$('.app-main').hasClass('feature-selected')) {
-
-					// set the popup content
-	        plugin_settings.map.popup.setContent(function() {
-
-						return '<p>'
-							+ plugin_settings.indicator.legend.prepend
-							+ e.layer.properties[indicator_key].toLocaleString(undefined, { maximumFractionDigits: plugin_settings.indicator.aggregation[aggregation.agg]['decimals'] })
-							+ ' '
-							+ plugin_settings.indicator.legend.append
-							+ '</p>'
-
-					})
-	        .setLatLng(e.latlng)
-	        .openOn(map)
-
-				}
-
-			}).on('mouseout', function(e) {
-
-				if (!$('.app-main').hasClass('feature-selected')) {
-					map.closePopup()
-				}
-
-			}).on('click', function (e) {
-
-				L.DomEvent.stop(e)
-
-        // if we have a selected feature, reset the style
-        if (plugin_settings.map.selected_feature != null) {
-          plugin_settings.map.layers.tiles.resetFeatureStyle(plugin_settings.map.selected_feature)
-        }
-
-				$('.app-main').addClass('feature-selected')
-
-        // set the selected feature id
-        plugin_settings.map.selected_feature = e.layer.properties[feature_ID_key]
-
-        // set the selected feature style
-        plugin_settings.map.layers.tiles.setFeatureStyle(plugin_settings.map.selected_feature, {
-          fill: true,
-					fillColor: '#9595a0',
-					color: '#2b2c42',
-          weight: 0.8,
-          fillOpacity: 0.5
-        })
-
-        // set the popup content
-        plugin_settings.map.popup.setContent(function() {
-
-					return '<p>'
-						+ plugin_settings.indicator.legend.prepend
-						+ e.layer.properties[indicator_key].toLocaleString(undefined, { maximumFractionDigits: plugin_settings.indicator.aggregation[aggregation.agg]['decimals'] })
-						+ ' '
-						+ plugin_settings.indicator.legend.append
-						+ '</p>'
-
-					})
-	        .setLatLng(e.latlng)
-	        .openOn(map)
-
-				// update charts if necessary
-
-				if (
-					plugin_settings.charts.enabled == true &&
-					plugin_settings.indicator.key !== 'sH_PGA'
-				) {
-					plugin.get_charts()
-				}
-
-      }).addTo(map)
-
+			})
 
 			$('body').removeClass('spinner-on')
 
 		},
 
-		set_shake_styles: function(pbf_key, indicator_key) {
+		choro_style: function(pbf_key, indicator_key) {
 
 			var plugin = this
 			var plugin_settings = plugin.options
 
 			var layer_style = {},
-					fillColor,
-					weight = 0
+					fillColor
 
 			layer_style[pbf_key] = function(properties) {
 
-				if (indicator_key == 'sH_PGA_max') {
-
-					fillColor = plugin._choro_color( properties[indicator_key] * 100)
-
-				} else {
-
-					var rounded_val = properties[indicator_key] * Math.pow(10, plugin_settings.indicator.aggregation[plugin_settings.aggregation.current.agg]['rounding'])
-
-					// if (z < 10) {
-					// 	console.log('val: ' + properties[indicator_key], 'rounding: ' +  plugin_settings.indicator.aggregation[plugin_settings.aggregation.current.agg]['rounding'], 'rounded: ' + rounded_val)
-					//
-					// 	z += 1
-					// }
-
-					fillColor = plugin._choro_color(rounded_val)
-					weight = 0.4
-
-					// if (plugin_settings.aggregation.current.agg == 's') {
-					// 	console.log(rounded_val, fillColor)
-					// }
-
-				}
+				var rounded_val = plugin._round(properties[indicator_key], plugin_settings.indicator.aggregation[plugin_settings.aggregation.current.agg]['rounding'])
 
 				return {
-					fillColor: fillColor,
-					weight: weight,
-					fillOpacity: 0.8,
+					fill: true,
+					fillColor: plugin._choro_color(rounded_val),
+					fillOpacity: 0.9,
 					color: '#000000',
 					opacity: 0.6,
-					fill: true
+					weight: (indicator_key == 'sH_PGA_max') ? 0 : 0.2
 				}
 			}
 
@@ -2270,11 +2319,7 @@ var csd_temp, s_temp
 		set_epicenter: function() {
 
       var plugin = this
-      //var plugin_item = this.item
       var plugin_settings = plugin.options
-      //var plugin_elements = plugin_settings.elements
-
-			// console.log(plugin_settings.scenario.coords)
 
 			var marker_coords = new L.LatLng(plugin_settings.scenario.coords.lat, plugin_settings.scenario.coords.lng)
 
@@ -2289,20 +2334,63 @@ var csd_temp, s_temp
       var plugin = this
       var plugin_settings = plugin.options
 
-			// var grades = [].concat(plugin_settings.indicator.legend.values).reverse()
+			var rounding = plugin_settings.indicator.aggregation[plugin_settings.aggregation.current.agg]['rounding']
 
-			var grades = plugin_settings.legend.grades,
-					rounding = plugin_settings.indicator.aggregation[plugin_settings.aggregation.current.agg]['rounding']
+			var grades = plugin_settings.legend.grades
 
-			return d >= grades[0] * Math.pow(10, rounding) ? '#800026' :
-				d >= grades[1] * Math.pow(10, rounding) ? '#bd0026' :
-				d >= grades[2] * Math.pow(10, rounding) ? '#e31a1c' :
-				d >= grades[3] * Math.pow(10, rounding) ? '#fc4e2a' :
-				d >= grades[4] * Math.pow(10, rounding) ? '#fd8d3c' :
-				d >= grades[5] * Math.pow(10, rounding) ? '#feb24c' :
-				d >= grades[6] * Math.pow(10, rounding) ? '#fed976' :
-				d >= grades[7] * Math.pow(10, rounding) ? '#ffeda0' :
-        '#ffffcc'
+			// default to the lightest color
+			var this_color = color_ramp[0]
+
+			// go through each grade
+			for (i = 0; i < grades.length; i += 1) {
+
+				// if the value is greater than grade[i],
+				// update this_color to the corresponding value in the color_ramp array
+
+				if (d >= grades[i] * Math.pow(10, rounding)) {
+					this_color = color_ramp[i]
+				}
+
+			}
+
+			return this_color
+
+		},
+
+		popup_content: function(properties, indicator_key) {
+
+      var plugin = this
+      var plugin_settings = plugin.options
+
+			var indicator = plugin_settings.indicator,
+					current_agg = plugin_settings.aggregation.current.agg,
+					aggregation = indicator.aggregation[current_agg]
+
+			var rounded_val
+
+			if (indicator.type == 'dollars') {
+
+				rounded_val = plugin._round_scale(properties[indicator_key])
+
+			} else {
+
+				rounded_val = plugin._round(properties[indicator_key], aggregation['rounding']).toLocaleString(undefined, { maximumFractionDigits: aggregation['decimals'] })
+
+				if (aggregation['rounding'] == -9) {
+					rounded_val += ' billion'
+				} else if (aggregation['rounding'] == -6) {
+					rounded_val += ' million'
+				}
+
+			}
+
+			return '<p>'
+				+ indicator.legend.prepend
+				+ rounded_val
+				+ ' '
+				+ indicator.legend.append
+				+ '</p>'
+				// + '<p>Real value: ' + e.layer.properties[indicator_key] + '</p>'
 
 		},
 
@@ -2499,8 +2587,9 @@ var csd_temp, s_temp
 						data: JSON.stringify(request_data),
 						success: function(data) {
 
-							// if (request.field == 'E_BldgDesLev') {
-							// 	console.log(data)
+							// if (request.field == 'E_BldgTypeG') {
+							// 	console.log('request', JSON.stringify(request_data))
+							// 	console.log('return', data)
 							// }
 
 							request.columns.forEach(function(column) {
@@ -2564,148 +2653,28 @@ var csd_temp, s_temp
 			return num * Math.pow(10, power)
 		},
 
-		// _get_max_vals: function() {
-		//
-		// 	var scenarios = [
-		// 		'SIM9p0_CascadiaInterfaceBestFault',
-		// 		'ACM7p0_GeorgiaStraitFault',
-		// 		'ACM7p3_LeechRiverFullFault',
-		// 		'IDM7p1_Sidney',
-		// 		'SCM7p5_valdesbois'
-		// 	]
-		//
-		// 	var all_vals = {}
-		//
-		// 	function doit(url = null) {
-		//
-		// 		if (url == null) {
-		// 			url = 'https://geo-api.stage.riskprofiler.ca/collections/opendrr_dsra_' + scenarios[0].toLowerCase() + '_indicators_csd/items?lang=en_US&f=json&limit=2000'
-		// 		}
-		//
-		// 		console.log(url)
-		//
-		// 		var nxt_lnk
-		//
-		// 		$.ajax({
-		// 			url: url,
-		// 			success: function(data) {
-		//
-		// 				var max = 0
-		//
-		// 				data.features.forEach(function(feature) {
-		//
-		// 					// console.log(feature)
-		//
-		// 					for (var key in feature.properties) {
-		//
-		// 						if (typeof feature.properties[key] == 'number') {
-		//
-		// 							var key_clean = key.slice(0, -3)
-		//
-		// 							if (typeof all_vals[key_clean] == 'undefined') {
-		// 								all_vals[key_clean] = {}
-		// 							}
-		//
-		// 							if (
-		// 								typeof all_vals[key_clean][scenarios[0]] == 'undefined' ||
-		// 								feature.properties[key] > all_vals[key_clean][scenarios[0]]
-		// 							) {
-		//
-		// 								all_vals[key_clean][scenarios[0]] = feature.properties[key]
-		//
-		// 							}
-		//
-		// 						}
-		//
-		//
-		// 					}
-		//
-		//
-		// 				})
-		//
-		// 				for (var l in data.links) {
-		// 					lnk = data.links[l]
-		//
-		// 					if (lnk.rel == 'next') {
-		// 						nxt_lnk = lnk.href
-		// 						break
-		// 					}
-		// 				}
-		//
-		// 				if (nxt_lnk) {
-		//
-		// 					console.log('next')
-		//
-		// 					// recursive
-		// 					doit(nxt_lnk)
-		//
-		// 				} else {
-		//
-		// 					console.log('done')
-		//
-		// 					scenarios.shift()
-		//
-		// 					if (scenarios.length) {
-		//
-		// 						doit()
-		//
-		// 					} else {
-		//
-		// 						process()
-		//
-		// 					}
-		//
-		// 				}
-		//
-		// 			}
-		// 		})
-		//
-		// 		console.log('---')
-		//
-		// 	}
-		//
-		// 	function process() {
-		// 		console.log(all_vals)
-		//
-		// 		// console.log(JSON.stringify(all_vals))
-		//
-		// 		/*
-		//
-		// 		'indicator' => array (
-		// 			array (
-		// 				'scenario' => y
-		// 				'value' => x
-		// 			),
-		// 			array (
-		// 				'scenario' => y
-		// 				'value' => x
-		// 			),
-		// 		)
-		//
-		//
-		// 		*/
-		//
-		// 		var div = $('<textarea>').appendTo('body').css('height', '200px')
-		//
-		// 		for (var indicator in all_vals) {
-		//
-		// 			div.append("'" + indicator + "' => array (")
-		//
-		// 			for (var scenario in all_vals[indicator]) {
-		// 				div.append("\n\tarray (")
-		// 				div.append("\n\t\t'scenario' => '" + scenario + "',")
-		// 				div.append("\n\t\t'value' => " + all_vals[indicator][scenario])
-		// 				div.append("\n\t),")
-		// 			}
-		//
-		// 			div.append("\n),\n\n")
-		//
-		// 		}
-		// 	}
-		//
-		// 	doit()
-		//
-		// }
+		_round_scale: function(num) {
+
+			var plugin = this,
+					rounded_num
+
+			// round the number to the given power
+			// shorten to 2 decimal places
+			// remove decimal places if equal to .00
+
+			if (num >= 1000000000) {
+				rounded_num = plugin._round(num, -9).toFixed(2).replace(/[.,]00$/, '') + ' billion'
+			} else if (num >= 100000) {
+				rounded_num = plugin._round(num, -6).toFixed(2).replace(/[.,]00$/, '') + ' million'
+			} else {
+				rounded_num = num.toLocaleString('en-CA', {
+					maximumFractionDigits: 0
+				})
+			}
+
+			return rounded_num
+
+		}
 
   }
 
