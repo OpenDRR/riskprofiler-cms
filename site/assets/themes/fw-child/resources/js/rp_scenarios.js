@@ -2120,11 +2120,12 @@ var grades, color_ramp
 
 				// SHAKEMAP
 
-				tile_url.collection += 'shakemap_hexbin'
+				tile_url.collection += 'shakemap_hexgrid'
 
 				feature_ID_key = 'gridid_1'
 
 				if (aggregation.agg == '5km') {
+					tile_url.collection = tile_url.collection.slice(0, -4) + 'bin'
 					feature_ID_key = 'gridid_5'
 				}
 
