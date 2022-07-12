@@ -1,11 +1,7 @@
-const geoapi_url = 'https://geo-api.riskprofiler.ca'
-const pbf_url = 'https://riskprofiler.ca'
-const api_url = 'https://api.riskprofiler.ca'
-
 // scenario profiler
 // v1.0
 
-;(function ($) {
+(function ($) {
 
   // custom select class
 
@@ -34,9 +30,9 @@ const api_url = 'https://api.riskprofiler.ca'
 
     init: function () {
 
-      var plugin = this;
+      var plugin_instance = this;
       var plugin_item = this.item;
-      var plugin_settings = plugin.options;
+      var plugin_settings = plugin_instance.options;
       var plugin_elements = plugin_settings.elements;
 
       //
@@ -95,52 +91,13 @@ const api_url = 'https://api.riskprofiler.ca'
 
 			})
 
-			// sort items
-
-			$('body').on('click', '.sort-item', function(e) {
-
-				var sort_order
-
-				// if not selected
-				// set sort to 'asc' and select
-
-				if (!$(this).hasClass('selected')) {
-
-					$(this).addClass('selected')
-
-					$(this).siblings().attr('data-sort-order', 'asc').removeClass('selected')
-
-					sort_order = 'asc'
-
-				} else {
-
-					// if selected,
-					// reverse the order
-
-					if ($(this).attr('data-sort-order') == 'asc') {
-						sort_order = 'desc'
-					} else {
-						sort_order = 'asc'
-					}
-
-				}
-
-				$(this).attr('data-sort-order', sort_order)
-
-				plugin.sort_items({
-					key: $(this).attr('data-sort-key'),
-					order: sort_order
-				})
-
-			})
-
     },
 
     get_sidebar: function(fn_options) {
 
-      var plugin = this
+      var plugin_instance = this
       var plugin_item = this.item
-      var plugin_settings = plugin.options
+      var plugin_settings = plugin_instance.options
       var plugin_elements = plugin_settings.elements
 
       // options
@@ -212,9 +169,9 @@ const api_url = 'https://api.riskprofiler.ca'
 
     get_controls: function(fn_options) {
 
-      var plugin = this
+      var plugin_instance = this
       var plugin_item = this.item
-      var plugin_settings = plugin.options
+      var plugin_settings = plugin_instance.options
       var plugin_elements = plugin_settings.elements
 
       // options
@@ -242,6 +199,30 @@ const api_url = 'https://api.riskprofiler.ca'
 						settings.success()
 					}
 
+					// sort
+
+					// $.ajax({
+					// 	url: '../site/assets/themes/fw-child/template/' + settings.dir + '/control-sort.php',
+					// 	data: {
+					// 		lang: plugin_settings.lang
+					// 	},
+					// 	success: function(sort_data) {
+					// 		$('.app-sidebar-sort').html(sort_data)
+					//
+					// 		if (typeof settings.success == 'function') {
+					// 			settings.success()
+					// 		}
+					//
+					// 		if (typeof settings.complete == 'function') {
+					// 			settings.complete()
+					// 		}
+					// 	},
+					// 	complete: function() {
+					// 		$('body').removeClass('spinner-on')
+					// 		$('#spinner-progress').text('')
+					// 	}
+					// })
+
 				},
 				complete: function() {
 
@@ -258,8 +239,8 @@ const api_url = 'https://api.riskprofiler.ca'
 
 		sort_items: function(fn_options) {
 
-      var plugin = this
-      var plugin_settings = plugin.options
+      var plugin_instance = this
+      var plugin_settings = plugin_instance.options
 
 			var settings = $.extend(true, {
 				key: null,
@@ -292,7 +273,7 @@ const api_url = 'https://api.riskprofiler.ca'
 
 			$('body').find('.sidebar-items').html(result)
 
-			// console.log('sort', settings.key, settings.order)
+			console.log('sort', settings.key, settings.order)
 
 		},
 
@@ -300,9 +281,9 @@ const api_url = 'https://api.riskprofiler.ca'
 
 			// centers the map on a point with an X offset of half of the width of the sidebar
 
-      var plugin = this
+      var plugin_instance = this
       var plugin_item = this.item
-      var plugin_settings = plugin.options
+      var plugin_settings = plugin_instance.options
       var plugin_elements = plugin_settings.elements
 
 			var settings = $.extend(true, {
@@ -324,8 +305,8 @@ const api_url = 'https://api.riskprofiler.ca'
 
 		get_tiles: function(fn_options) {
 
-			var plugin = this
-			var plugin_settings = plugin.options
+			var plugin_instance = this
+			var plugin_settings = plugin_instance.options
 
 			var defaults = {
 				url: {
@@ -343,7 +324,6 @@ const api_url = 'https://api.riskprofiler.ca'
 		      interactive: true
 				},
 				functions: {
-					before: null,
 					add: null,
 					mouseover: null,
 					mouseout: null,
@@ -359,8 +339,6 @@ const api_url = 'https://api.riskprofiler.ca'
 			var settings = $.extend(true, defaults, fn_options)
 
 			// console.log('get_tiles', settings)
-
-			// remove existing layer
 
 			if (settings.map.hasLayer(settings.tiles)) {
 				settings.map.removeLayer(settings.tiles)
@@ -426,8 +404,8 @@ const api_url = 'https://api.riskprofiler.ca'
 
 		do_history: function(hash) {
 
-			var plugin = this
-			var plugin_settings = plugin.options
+			var plugin_instance = this
+			var plugin_settings = plugin_instance.options
 
 			var new_title = plugin_settings.history.title,
 					new_url = plugin_settings.history.url
@@ -481,35 +459,6 @@ const api_url = 'https://api.riskprofiler.ca'
 			}
 
 			// console.log('history', new_url, new_title)
-
-		},
-
-		round: function(fn_options) {
-
-			var settings = $.extend(true, {
-				num: 0,
-				power: 0
-			}, fn_options)
-
-			return settings.num * Math.pow(10, settings.power)
-		},
-
-		round_dollars: function(num) {
-
-			var plugin = this,
-					rounded_num
-
-			if (num > 1000000000) {
-				rounded_num = plugin._round(num, -9).toFixed(2) + ' billion'
-			} else if (num > 100000) {
-				rounded_num = plugin._round(num, -6).toFixed(2) + ' million'
-			} else {
-				rounded_num = num.toLocaleString('en-CA', {
-					maximumFractionDigits: 0
-				})
-			}
-
-			return '$' + rounded_num
 
 		}
 

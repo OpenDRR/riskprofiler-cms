@@ -227,9 +227,6 @@ body.spinner-on #spinner-progress {
   color: #2b2c42;
   transition: 0.25s;
 }
-#main-header svg {
-  overflow: visible;
-}
 
 body.nav-open {
   overflow: hidden;
@@ -269,6 +266,9 @@ body.nav-open #header-secondary {
   max-width: 120px;
 }
 
+#header-primary {
+  font-size: 1.125rem;
+}
 @media (max-width: 767.98px) {
   #header-primary {
     position: fixed;
@@ -278,12 +278,6 @@ body.nav-open #header-secondary {
     transform: translateY(20%);
     transition: left 0s ease 0.25s, opacity 0.25s ease 0s, transform 0.25s ease 0s;
     text-align: center;
-    font-size: 1.125rem;
-  }
-}
-@media (min-width: 992px) {
-  #header-primary {
-    font-size: 1.125rem;
   }
 }
 #header-primary .current-nav-item a {
@@ -318,11 +312,6 @@ body.nav-open #header-secondary {
 }
 @media (min-width: 768px) {
   #header-secondary {
-    font-size: 0.625rem;
-  }
-}
-@media (min-width: 992px) {
-  #header-secondary {
     font-size: 0.6875rem;
   }
 }
@@ -333,12 +322,6 @@ body.nav-open #header-secondary {
     bottom: 2rem;
     opacity: 0;
     transition: left 0s ease 0.25s, opacity 0.25s ease 0s;
-  }
-}
-@media (min-width: 768px) and (max-width: 991.98px) {
-  #header-secondary .nav-link {
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
   }
 }
 
@@ -488,15 +471,11 @@ body.nav-open #header-secondary {
   opacity: 1;
   transition: left 0.25s ease 0s, opacity 0.1s ease 0s;
 }
-@media (min-width: 768px) {
-  .app-page .app-main[data-mode=scenario-detail].indicator-selected.charts-on .leaflet-left {
-    left: 50%;
-  }
+.app-page .app-main[data-mode=scenario-detail].indicator-selected.charts-on .leaflet-left {
+  left: 50%;
 }
-@media (min-width: 768px) {
-  .app-page .app-main[data-mode=scenario-detail].indicator-selected.charts-on .legend .items {
-    width: 50vw;
-  }
+.app-page .app-main[data-mode=scenario-detail].indicator-selected.charts-on .legend .items {
+  width: 50vw;
 }
 .app-page .app-main[data-mode=scenario-detail] .leaflet-control-container .leaflet-control-attribution {
   opacity: 0;
@@ -761,7 +740,7 @@ body.nav-open #header-secondary {
 }
 .app-page .app-map {
   position: relative;
-  height: 50vh;
+  height: 40vh;
   order: 1;
   z-index: 1;
 }
@@ -840,27 +819,16 @@ body.nav-open #header-secondary {
 .app-page .leaflet-popup {
   z-index: 10;
 }
-@media (min-width: 768px) {
-  .app-page[data-sidebar-width=half] .app-sidebar {
-    width: 50%;
-  }
+.app-page[data-sidebar-width=half] .app-sidebar {
+  width: 50%;
 }
-@media (min-width: 768px) {
-  .app-page[data-sidebar-width=half] .leaflet-left {
-    left: 50%;
-  }
+.app-page[data-sidebar-width=half] .leaflet-left {
+  left: 50%;
 }
-@media (min-width: 768px) {
-  .app-page[data-sidebar-width=half] .legend .items {
-    width: 50vw;
-  }
-}
-@media (min-width: 768px) {
-  .app-page[data-sidebar-width=none] .app-sidebar {
-    width: 25%;
-    left: -25%;
-    opacity: 0;
-  }
+.app-page[data-sidebar-width=none] .app-sidebar {
+  width: 25%;
+  left: -25%;
+  opacity: 0;
 }
 .app-page[data-sidebar-width=none] .leaflet-left {
   left: 0;
@@ -897,6 +865,7 @@ body.nav-open #header-secondary {
 .app-page .legend .legend-item {
   flex-grow: 1;
   height: 0.75rem;
+  opacity: 0.8;
 }
 .app-page .leaflet-pulsing-icon {
   box-shadow: none;
@@ -1118,17 +1087,6 @@ body.nav-open #header-secondary {
   margin-bottom: 0.75rem;
   margin-right: 0;
 }
-#page-risks .highcharts-yaxis .highcharts-axis-line {
-  stroke-width: 1;
-}
-#page-risks .highcharts-color-0 {
-  fill: #afc899;
-  stroke: #afc899;
-}
-#page-risks .highcharts-color-2 {
-  fill: #d90429;
-  stroke: #d90429;
-}
 
 .sidebar-item.city {
   padding-top: 0.5rem;
@@ -1157,23 +1115,16 @@ body.nav-open #header-secondary {
   color: #d90429;
 }
 .risk-popup .leaflet-popup-content {
+  min-width: 25vw;
   margin: 0;
-}
-.risk-popup .leaflet-popup-content .popup-detail {
-  width: 300px;
 }
 .risk-popup .risk-popup-city {
   font-size: 1.25rem;
 }
 
 .map-search {
+  width: calc(25vw - 1rem);
   position: relative;
-  width: calc(75vw - 1rem);
-}
-@media (min-width: 768px) {
-  .map-search {
-    width: calc(25vw - 1rem);
-  }
 }
 
 #map-search-clear {
