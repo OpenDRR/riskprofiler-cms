@@ -149,7 +149,8 @@ var sticky_offset = 0,
 
     $(document).smooth_scroll({
       debug: false,
-      offset: smooth_scroll_offset
+      offset: smooth_scroll_offset,
+			next: '.fw-section'
     })
 
     // if (init_scroll && $(init_scroll).length) {

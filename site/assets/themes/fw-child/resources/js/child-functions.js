@@ -6,6 +6,8 @@ var child_logging = true
 
 ;(function($) {
   $(function() {
+		
+		var nav_items = $('#header-primary .fw-menu-item')
 
     //
     // CHILD THEME URL
@@ -29,11 +31,6 @@ var child_logging = true
 
 		})
 
-		$(document).on('overlay_show', function() {
-			$('body').removeClass('nav-open')
-			$('#menu-icon i').removeClass('fa-times').addClass('fa-bars')
-		})
-
     //
     // APP
     //
@@ -44,15 +41,19 @@ var child_logging = true
 
 			if ($('body').attr('id') == 'page-scenarios') {
 
-				$(document).rp_scenarios({
-
-				})
-
+				// fire scenarios app
+				$(document).rp_scenarios()
+				
 			} else if ($('body').attr('id') == 'page-risks') {
-
-				$(document).rp_risks({
-
-				})
+				
+				// force current classes on nav item
+				// (url doesn't match button href because it's a overlay toggle)
+				
+				$('#header-primary .fw-menu-item').last().addClass('current-nav-item').find('a').addClass('.current-nav-link')
+				
+				// fire risks app
+				$(document).rp_risks()
+				
 
 			}
 
@@ -65,6 +66,10 @@ var child_logging = true
 			})
 
 		}
+		
+		var current_nav_item = $('#header-primary').find('.current-nav-item')
+		
+		// filter toggles in risks overlay
 
 		$('body').on('click', '.overlay-content #psra-items-filter .item', function() {
 
@@ -88,6 +93,27 @@ var child_logging = true
 				item_list.find('[data-type="' + selected_filter + '"]').closest('.query-item').slideDown(250)
 			}
 
+		})
+		
+		// overlay show/hide events
+		
+		$(document).on('overlay_show', function() {
+			$('body').removeClass('nav-open')
+			$('#menu-icon i').removeClass('fa-times').addClass('fa-bars')
+			
+			$(nav_items[0]).removeClass('current-nav-item').find('a').removeClass('current-nav-link')
+			
+			$(nav_items[1]).addClass('current-nav-item').find('a').addClass('current-nav-link')
+			
+		}).on('overlay_hide', function() {
+			
+			$(nav_items[1]).removeClass('current-nav-item').find('a').removeClass('current-nav-link')
+			
+			console.log(current_nav_item)
+			if (current_nav_item.length) {
+				current_nav_item.addClass('current-nav-item').find('a').addClass('current-nav-link')
+			}
+			
 		})
 
 		//
