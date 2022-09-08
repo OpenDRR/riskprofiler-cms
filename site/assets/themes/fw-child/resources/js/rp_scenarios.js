@@ -583,8 +583,12 @@ var grades, color_ramp
 					},
 					{
 						text: '',
-						id: 'breadcrumb-scenario-indicator',
-						class: 'tip'
+						id: 'breadcrumb-scenario-indicator'
+					},
+					{
+						text: '',
+						id: 'breadcrumb-scenario-uid',
+						class: 'cancellable d-none'
 					}
 				],
 			},
@@ -863,11 +867,11 @@ var grades, color_ramp
 			// BASEMAP
 
 			var basemap_URL = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&region=CA',
-					basemap_att = 'Map data © 2022 Google | <a href="https://www.google.com/intl/en-CA_US/help/terms_maps/" target="_blank">Terms of use</a>'
+					basemap_att = 'Map data © 2022 Google | <a href="https://www.google.com/intl/en_ca/help/terms_maps/" target="_blank">Terms of use</a>'
 
 			if ($('body').hasClass('lang-fr')) {
 				basemap_URL += '&hl=fr-CA'
-				basemap_att = 'Map data © 2022 Google | <a href="https://www.google.com/intl/en-CA_US/help/terms_maps/" target="_blank">Terms of use</a>'
+				basemap_att = 'Données cartographiques © 2022 Google | <a href="https://www.google.com/intl/fr_ca/help/terms_maps/" target="_blank">Conditions d’utilisation</a>'
 			} else {
 				basemap_URL += '&hl=en'
 			}
@@ -889,9 +893,7 @@ var grades, color_ramp
 			plugin_settings.map.clusters = L.markerClusterGroup({
 				animateAddingMarkers: true,
 				iconCreateFunction: function (cluster) {
-					var markers = cluster.getAllChildMarkers();
-
-					// console.log(markers)
+					var markers = cluster.getAllChildMarkers()
 
 					var n = 0
 
@@ -899,7 +901,7 @@ var grades, color_ramp
 						n += 1
 					}
 
-					return L.divIcon({ html: n, className: 'scenario-cluster', iconSize: L.point(40, 40) });
+					return L.divIcon({ html: n, className: 'scenario-cluster', iconSize: L.point(40, 40) })
 				},
 				clusterPane: 'markers'
 			})
@@ -935,7 +937,15 @@ var grades, color_ramp
 						plugin_settings.map.selected_feature = null
 
 						$('.app-main').removeClass('feature-selected')
-
+						
+						// reset breadcrumb
+						
+						$('.app-breadcrumb .breadcrumb')
+							.find('#breadcrumb-scenario-uid')
+							.removeClass('d-flex').addClass('d-none')
+							.find('span')
+							.text('')
+						
 						feature_deselected = true
 
 	        }
@@ -950,10 +960,14 @@ var grades, color_ramp
 							plugin_settings.charts.enabled == true &&
 							plugin_settings.indicator.key !== 'sH_PGA'
 						) {
+							
+							// reset charts
 							console.log('reset charts')
+							
 							plugin.get_charts({
 								reset: true
 							})
+							
 						}
 
 					}, 500)
@@ -1057,7 +1071,8 @@ var grades, color_ramp
 
 										plugin.item_select({
 											scenario: feature.properties,
-											marker: this
+											marker: this,
+											fit: false
 										})
 
 									})
@@ -1139,6 +1154,8 @@ var grades, color_ramp
 						data: column.value
 					})
 				})
+				
+				var table_title = plugin._get_table_title(request.name)
 
 				request.object = Highcharts.chart('chart-' + request.field, {
 					tooltip: {
@@ -1166,13 +1183,20 @@ var grades, color_ramp
 						type: 'column',
 				    height: 250,
 						marginTop: 30,
-						styledMode: true
+						styledMode: true,
+						events: {
+							render: function() {
+								
+								this.setTitle({ text: plugin._get_table_title(request.name) })
+								
+							}
+						}
 					},
 					title: {
 						enabled: false,
-						text: null,
+						text: plugin._get_table_title(request.name),
 						align: 'left',
-						x: 0
+						y: -50
 					},
 					xAxis: {
 						labels: {
@@ -1198,7 +1222,6 @@ var grades, color_ramp
 					legend: {
 						enabled: false,
 						width: '100%',
-						maxHeight: 100,
 						margin: 10
 					},
 					navigation: {
@@ -1207,6 +1230,20 @@ var grades, color_ramp
 						}
 					},
 					exporting: {
+						filename: request.name,
+						chartOptions: {
+							chart: {
+								height: 400
+							},
+							title: {
+								enabled: true,
+								text: plugin._get_table_title(request.name),
+								y: 0
+							},
+							legend: {
+								enabled: true
+							}
+						},
 						menuItemDefinitions: {
 							dataModal: {
 								onclick: function() {
@@ -1214,8 +1251,8 @@ var grades, color_ramp
 									$('#chart-data-placeholder').html(this.getTable())
 
 									$('#chart-data-placeholder').find('table').addClass('table table-responsive')
-
-									$('#data-modal .modal-title').html(plugin_settings.indicator.label + ' ' + rp.by + ' ' + request.name)
+									
+									$('#data-modal .modal-title').html(plugin._get_table_title(request.name))
 
 									$('#data-modal').modal('show')
 
@@ -1332,7 +1369,17 @@ var grades, color_ramp
 				}
 
 			})
-
+			
+			//
+			
+			$('body').on('page_tour_trigger', function () {
+				
+				if (plugin_settings.current_view == 'detail') {
+					$('body').find('.app-head-back').trigger('click')
+				}
+				
+			})
+			
 			//
 			// ACTIONS
 			//
@@ -1340,6 +1387,9 @@ var grades, color_ramp
 			// click the 'explore' button in a sidebar item
 
 			$('body').on('click', '.sidebar-item .sidebar-button', function(e) {
+				
+				$('#page-tour').page_tour('hide_tour')
+				
 				plugin.item_detail({
 					scenario: plugin_settings.scenario
 				})
@@ -1402,6 +1452,12 @@ var grades, color_ramp
   				plugin.get_layer()
 
   			}
+			})
+			
+			// click the cancellable 'selected feature' breadcrumb
+			
+			$('body').on('click', '.breadcrumb-item.cancellable', function() {
+				map.closePopup()
 			})
 
 
@@ -1556,6 +1612,23 @@ var grades, color_ramp
 			// }
 
     },
+		
+		_get_table_title: function(chart_name) {
+			
+			var plugin = this
+			var plugin_settings = plugin.options
+			
+			table_title = plugin_settings.indicator.label + ' '
+			
+			if ($('.app-breadcrumb .breadcrumb').find('#breadcrumb-scenario-uid').text() != '') {
+				table_title += rp['in'] + ' ' + $('.app-breadcrumb .breadcrumb').find('#breadcrumb-scenario-uid').text() + ' '
+			}
+			
+			table_title += rp.by + ' ' + chart_name
+			
+			return table_title
+			
+		},
 
 		set_scenario: function(fn_options) {
 
@@ -1605,7 +1678,8 @@ var grades, color_ramp
 			var defaults = {
 				scenario: null,
 				marker: null,
-				event: null
+				event: null,
+				fit: true
 			}
 
 			if (typeof fn_options == 'string') {
@@ -1653,7 +1727,8 @@ var grades, color_ramp
 				// get the bounding layer
 
 				plugin.get_bounds({
-					scenario: settings.scenario
+					scenario: settings.scenario,
+					fit: settings.fit
 				})
 
 				plugin.do_breadcrumb('select')
@@ -1775,7 +1850,8 @@ var grades, color_ramp
       var plugin_settings = plugin.options
 
       var settings = $.extend(true, {
-				scenario: null
+				scenario: null,
+				fit: true
 			}, fn_options)
 
 			var map = plugin_settings.map.object
@@ -1810,13 +1886,17 @@ var grades, color_ramp
 							},
 							pane: 'bbox'
 						}).addTo(map)
+						
+						if (settings.fit == true) {
 
-						map.fitBounds(
-							plugin_settings.map.layers.bbox.getBounds(),
-							{
-								paddingTopLeft: [$(window).outerWidth() / 4, 0]
-							}
-						)
+							map.fitBounds(
+								plugin_settings.map.layers.bbox.getBounds(),
+								{
+									paddingTopLeft: [$(window).outerWidth() / 4, 0]
+								}
+							)
+							
+						}
 
 					}
 				})
@@ -2275,7 +2355,25 @@ var grades, color_ramp
 		        plugin_settings.map.popup.setContent(plugin.popup_content(e.layer.properties, indicator_key))
 			        .setLatLng(e.latlng)
 			        .openOn(map)
-
+							
+						// update the breadcrumb
+						
+						var breadcrumb_uid = ''
+						
+						if (e.layer.properties.csdname) {
+							breadcrumb_uid = e.layer.properties.csdname
+							
+							if (e.layer.properties.Sauid) {
+								breadcrumb_uid += ' (' + e.layer.properties.Sauid + ')'
+							}
+							
+							$('.app-breadcrumb .breadcrumb')
+								.find('#breadcrumb-scenario-uid')
+								.removeClass('d-none').addClass('d-flex')
+								.find('span')
+								.text(breadcrumb_uid)
+						}
+						
 						// update charts if necessary
 
 						if (
@@ -2399,9 +2497,7 @@ var grades, color_ramp
 		do_breadcrumb: function(fn_options) {
 
 			var plugin = this
-			//var plugin_item = this.item
 			var plugin_settings = plugin.options
-			//var plugin_elements = plugin_settings.elements
 
 			var settings = $.extend(true, {}, fn_options)
 
@@ -2413,18 +2509,25 @@ var grades, color_ramp
 
 				// check settings for breadcrumb object
 
-				plugin_settings.breadcrumbs[fn_options].forEach(function(i) {
+				plugin_settings.breadcrumbs[fn_options].forEach(function(item) {
 
 					// console.log(i)
 
-					new_item = $('<li class="breadcrumb-item">' + i.text + '</li>').appendTo('.app-breadcrumb .breadcrumb')
+					new_item = $('<li class="breadcrumb-item">' + item.text + '</li>').appendTo('.app-breadcrumb .breadcrumb')
 
-					if (typeof i.class !== 'undefined') {
-						new_item.addClass(i.class)
+					if (typeof item.class !== 'undefined') {
+						new_item.addClass(item.class)
+						
+						if (item.class.includes('cancellable')) {
+							
+							new_item.append('<div class="d-flex align-items-center bg-light py-1 px-2"><span></span><i class="fas fa-times ml-2"></i></div>')
+							
+						}
+						
 					}
 
-					if (typeof i.id !== 'undefined') {
-						new_item.attr('id', i.id)
+					if (typeof item.id !== 'undefined') {
+						new_item.attr('id', item.id)
 					}
 
 				})
@@ -2578,8 +2681,6 @@ var grades, color_ramp
 						}
 
 					}
-					
-					console.log('request data for ' + request.field, request_data)
 
 					$.ajax({
 						method: 'POST',
@@ -2590,8 +2691,6 @@ var grades, color_ramp
 						url: api_url + '/opendrr_dsra_' + plugin_settings.scenario.key.toLowerCase() + '_indicators_b/_search',
 						data: JSON.stringify(request_data),
 						success: function(data) {
-							
-							console.log('response for ' + request.field, data)
 
 							// if (request.field == 'E_BldgTypeG') {
 							// 	console.log('request', JSON.stringify(request_data))
