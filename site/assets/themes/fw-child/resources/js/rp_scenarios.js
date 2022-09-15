@@ -317,6 +317,11 @@ var grades, color_ramp
 						tooltips: false,
 						columns: [
 							{
+								code: 'PC',
+								name: 'Pre-Code',
+								value: [0]
+							},
+							{
 								code: 'LC',
 								name: 'Low Code',
 								value: [0]
@@ -329,11 +334,6 @@ var grades, color_ramp
 							{
 								code: 'HC',
 								name: 'High Code',
-								value: [0]
-							},
-							{
-								code: 'PC',
-								name: 'Pre-Code',
 								value: [0]
 							}
 						]
@@ -786,21 +786,21 @@ var grades, color_ramp
 						aggregation = indicator.aggregation,
 						current_agg = plugin_settings.aggregation.current.agg
 
-				if (indicator.type != 'dollars') {
-
-					switch (aggregation[current_agg]['rounding']) {
-						case -9 :
-							append = 'billion ' + append
-							break
-						case -6 :
-							append = 'million ' + append
-							break
-						case -3 :
-							append = 'thousand ' + append
-							break
-					}
-
-				}
+// 				if (indicator.type != 'dollars') {
+// 
+// 					switch (aggregation[current_agg]['rounding']) {
+// 						case -9 :
+// 							append = 'billion ' + append
+// 							break
+// 						case -6 :
+// 							append = 'million ' + append
+// 							break
+// 						case -3 :
+// 							append = 'thousand ' + append
+// 							break
+// 					}
+// 
+// 				}
 
 				legend_markup = '<h6>' + indicator.label + '</h6>'
 
@@ -815,9 +815,7 @@ var grades, color_ramp
 						})
 
 					if (indicator.type == 'dollars') {
-
-						this_val = plugin._round_scale(grades[i - 1])
-
+						this_val = plugin._format_figure(grades[i - 1])
 					}
 
 					var row_markup = '<div class="legend-item" data-toggle="tooltip" data-placement="top" style="background-color: '
@@ -829,12 +827,12 @@ var grades, color_ramp
 					if (grades[i]) {
 
 						var next_val = plugin._round(grades[i], aggregation[current_agg]['rounding']).toLocaleString(undefined, {
-								maximumFractionDigits: aggregation[current_agg]['decimals']
-							})
+							maximumFractionDigits: aggregation[current_agg]['decimals']
+						})
 
 						if (indicator.type == 'dollars') {
 
-							next_val = plugin._round_scale(grades[i])
+							next_val = plugin._format_figure(grades[i])
 
 						}
 
@@ -1071,8 +1069,7 @@ var grades, color_ramp
 
 										plugin.item_select({
 											scenario: feature.properties,
-											marker: this,
-											fit: false
+											marker: this
 										})
 
 									})
@@ -1168,15 +1165,35 @@ var grades, color_ramp
 							if (this.series.name != this.series.userOptions.custom.full_name) {
 								series_name = this.series.userOptions.custom.full_name + ' (' + this.series.name + ')'
 							}
+							
+							var tooltip_val
+							
+							// if (plugin._round_scale(this.y) == '<1000') {
+							if (plugin._format_figure(this.y).charAt(0) == '<') {
+								
+								tooltip_val = rp.less_than 
+									+ ' ' 
+									+ plugin_settings.indicator.legend.prepend 
+									+ plugin._format_figure(this.y).substring(1)
+									+ ' ' 
+									+ plugin_settings.indicator.legend.append
+									
+							} else {
+								
+								tooltip_val = plugin_settings.indicator.legend.prepend
+									+ plugin._format_figure(this.y) 
+									+ ' ' 
+									+ plugin_settings.indicator.legend.append
+									
+							}
 
-							return '<strong>' + series_name + ':</strong> '
-								+ plugin_settings.indicator.legend.prepend
-								+ this.y.toLocaleString(undefined, {
-									maximumFractionDigits: plugin_settings.indicator.aggregation[plugin_settings.aggregation.current.agg]['decimals']
-								})
-								+ ' '
-								+ plugin_settings.indicator.legend.append
-
+							return '<strong>' + series_name + ':</strong> ' + tooltip_val
+								
+								// old:
+								// this.y.toLocaleString(undefined, {
+								// 	maximumFractionDigits: plugin_settings.indicator.aggregation[plugin_settings.aggregation.current.agg]['decimals']
+								// })
+								
 						}
 					},
 					chart: {
@@ -1196,7 +1213,7 @@ var grades, color_ramp
 						enabled: false,
 						text: plugin._get_table_title(request.name),
 						align: 'left',
-						y: -50
+						y: -100
 					},
 					xAxis: {
 						labels: {
@@ -1353,12 +1370,8 @@ var grades, color_ramp
 				if (plugin_settings.current_view == 'detail') {
 
 					plugin_settings.map.current_zoom = e.target.getZoom()
-
+					
           plugin_settings.aggregation.previous = plugin_settings.aggregation.current.agg
-
-					// plugin.prep_for_api({
-					// 	event: 'zoomend'
-					// })
 
 					plugin.get_layer({
 						event: 'zoomend'
@@ -1366,6 +1379,10 @@ var grades, color_ramp
 
 					plugin_settings.map.last_zoom = plugin_settings.map.current_zoom
 
+				} else if (plugin_settings.current_view == 'select') {
+					
+					// todo: adjust shakemap aggregation
+					
 				}
 
 			})
@@ -1378,6 +1395,10 @@ var grades, color_ramp
 					$('body').find('.app-head-back').trigger('click')
 				}
 				
+			})
+			
+			$(document).on('overlay_show', function() {
+				$('#page-tour').page_tour('hide_tour')
 			})
 			
 			//
@@ -1401,13 +1422,26 @@ var grades, color_ramp
 
 				var this_scenario = JSON.parse($(this).attr('data-scenario'))
 
+				// cycle through the markers to find the one that matches this scenario
+				
 				plugin_settings.map.markers.resetStyle().eachLayer(function(layer) {
 
 					if (this_scenario.id == layer.feature.properties.id) {
+						
+						var fit_scenario = true
+						
+						// console.log('current zoom', plugin_settings.map.object.getZoom())
+						
+						if (plugin_settings.map.object.getZoom() >= 10) {
+							fit_scenario = false
+							
+							console.log('don\'t fit bounds because we\'re zoomed in')
+						}
 
 						plugin.item_select({
 							scenario: this_scenario,
-							marker: layer
+							marker: layer,
+							fit: fit_scenario
 						})
 
 					}
@@ -1704,9 +1738,9 @@ var grades, color_ramp
 
 			if (settings.scenario != null) {
 
+				// set the given scenario as the new global scenario object
+				
 				plugin_settings.scenario = settings.scenario
-
-				// console.log(plugin_settings.scenario)
 
 				// select the marker
 
@@ -1716,6 +1750,7 @@ var grades, color_ramp
 				})
 
 				// update the epicentre and display it
+				
 				plugin.set_epicenter()
 
 				// select the sidebar item
@@ -1865,39 +1900,110 @@ var grades, color_ramp
 				$('#spinner-progress').text('Loading scenario data')
 
 				plugin_settings.map.panes.bbox.style.display = ''
-
-				$.ajax({
-					url: 'https://geo-api.riskprofiler.ca/collections/opendrr_shakemap_scenario_extents/items/' + settings.scenario.key,
-					data: {
-						f: 'json'
+				
+				// recreate the get_tiles function to show the shakemap here instead of just the scenario extent
+				
+				if (map.hasLayer(plugin_settings.map.layers.bbox)) map.removeLayer(plugin_settings.map.layers.bbox)
+				
+				var bounds = L.latLngBounds(L.latLng(
+					plugin_settings.scenario.bounds.sw_lat,
+					plugin_settings.scenario.bounds.sw_lng
+				), L.latLng(
+					plugin_settings.scenario.bounds.ne_lat,
+					plugin_settings.scenario.bounds.ne_lng
+				))
+				
+				// set the indicator
+				
+				plugin.set_indicator({
+					key: 'sH_PGA', 
+					label: 'Peak Ground Acceleration, in units of g', 
+					retrofit: false, 
+					aggregation: { 
+						'1km': { rounding: 2, decimals: 2 }, 
+						'5km': { rounding: 2, decimals: 2 }, 
+						'10km': { rounding: 2, decimals: 2 }, 
+						'25km': { rounding: 2, decimals: 2 }, 
+						'50km': { rounding: 2, decimals: 2 }
+					}, 
+					legend: { 
+						prepend: '', 
+						append: '%g', 
+						values: { 
+							'5km': [ 0, 0.0017, 0.014, 0.039, 0.092, 0.18, 0.24, 0.65, 1.24 ], 
+							'1km': [ 0, 0.0017, 0.014, 0.039, 0.092, 0.18, 0.24, 0.65, 1.24 ]
+						}, 
+						'color': 'shake'
+					} 
+				})
+					
+				color_ramp = plugin_settings.legend.colors['shake']
+				
+				// find the aggregation settings for the current zoom value
+				
+				plugin_settings.aggregation.settings.shake.forEach(function (i) {
+				
+					if (map.getZoom() >= i.min && map.getZoom() <= i.max) {
+						if (plugin_settings.aggregation.current.agg != i.agg) {
+							plugin_settings.aggregation.current = i
+						}
+					}
+				
+				})
+				
+				// set tile vars
+				
+				var	aggregation = plugin_settings.aggregation.current,
+						feature_ID_key
+				
+				var tile_url = {
+					collection: 'dsra_' + plugin_settings.scenario.key.toLowerCase() + '_shakemap_hexgrid',
+					aggregation: aggregation.agg,
+					projection: 'EPSG_900913'
+				}
+				
+				// SHAKEMAP
+			
+				feature_ID_key = 'gridid_1'
+			
+				if (aggregation.agg == '5km') {
+					tile_url.collection = tile_url.collection.slice(0, -4) + 'bin'
+					tile_url.collection = tile_url.collection.slice(0, -4) + 'bin'
+					feature_ID_key = 'gridid_5'
+				}
+				
+				plugin_settings.legend.grades = plugin_settings.indicator.legend.values[aggregation.agg]
+				
+				$(document).profiler('get_tiles', {
+					map: map,
+					url: tile_url,
+					indicator: plugin_settings.indicator,
+					aggregation: plugin_settings.aggregation,
+					tiles: plugin_settings.map.layers.bbox,
+					options: {
+						pane: 'bbox',
+						getFeatureId: function(feature) {
+							return feature.properties[feature_ID_key]
+						},
+						bounds: bounds,
+						vectorTileLayerStyles: plugin.choro_style(tile_url.collection + '_' + aggregation.agg, plugin_settings.indicator.key + '_max')
 					},
-					dataType: 'json',
-					success: function(bounds) {
-
-						// remove existing
-
-						if (map.hasLayer(plugin_settings.map.layers.bbox)) map.removeLayer(plugin_settings.map.layers.bbox)
-
-						plugin_settings.map.layers.bbox = L.geoJSON(bounds, {
-							style: {
-								fillColor: '#d90429',
-								fillOpacity: 0.2,
-								weight: 0
-							},
-							pane: 'bbox'
-						}).addTo(map)
-						
-						if (settings.fit == true) {
-
-							map.fitBounds(
-								plugin_settings.map.layers.bbox.getBounds(),
-								{
+					functions: {
+						add: function(e) {
+							
+							// set the tile var to the new layer that was created
+							plugin_settings.map.layers.bbox = e.target
+							
+							// fit bounds if necessary
+							if (settings.fit == true) {
+								
+								map.fitBounds(bounds, {
 									paddingTopLeft: [$(window).outerWidth() / 4, 0]
-								}
-							)
+								})
+								
+							}
 							
 						}
-
 					}
 				})
 
@@ -2153,7 +2259,9 @@ var grades, color_ramp
       var plugin_settings = plugin.options
 			var map = plugin_settings.map.object
 
-      var settings = $.extend(true, {}, fn_options)
+      var settings = $.extend(true, {
+				fit: false
+			}, fn_options)
 
 			// close popups
 
@@ -2206,6 +2314,7 @@ var grades, color_ramp
 				feature_ID_key = 'gridid_1'
 
 				if (aggregation.agg == '5km') {
+					tile_url.collection = tile_url.collection.slice(0, -4) + 'bin'
 					tile_url.collection = tile_url.collection.slice(0, -4) + 'bin'
 					feature_ID_key = 'gridid_5'
 				}
@@ -2298,6 +2407,13 @@ var grades, color_ramp
 
 						// set the tile var to the new layer that was created
 						plugin_settings.map.layers.tiles = e.target
+						
+						if (settings.fit == true) {
+							map.fitBounds(bounds, {
+								paddingTopLeft: [$(window).outerWidth() / 4, 0]
+							})
+							
+						}
 
 						plugin_settings.map.legend.addTo(plugin_settings.map.object)
 
@@ -2397,16 +2513,21 @@ var grades, color_ramp
 			var plugin_settings = plugin.options
 
 			var layer_style = {},
-					fillColor
+					fillOpacity = 0.9
+					
+			if (plugin_settings.current_view != 'detail') {
+				fillOpacity = 0.75
+			}
 
 			layer_style[pbf_key] = function(properties) {
 
 				var rounded_val = plugin._round(properties[indicator_key], plugin_settings.indicator.aggregation[plugin_settings.aggregation.current.agg]['rounding'])
 
+
 				return {
 					fill: true,
 					fillColor: plugin._choro_color(rounded_val),
-					fillOpacity: 0.9,
+					fillOpacity: fillOpacity,
 					color: '#000000',
 					opacity: 0.6,
 					weight: (indicator_key == 'sH_PGA_max') ? 0 : 0.2
@@ -2465,32 +2586,62 @@ var grades, color_ramp
 			var indicator = plugin_settings.indicator,
 					current_agg = plugin_settings.aggregation.current.agg,
 					aggregation = indicator.aggregation[current_agg]
+					
+			var popup_val,
+					rounded_val
 
-			var rounded_val
-
-			if (indicator.type == 'dollars') {
-
-				rounded_val = plugin._round_scale(properties[indicator_key])
-
-			} else {
-
-				rounded_val = plugin._round(properties[indicator_key], aggregation['rounding']).toLocaleString(undefined, { maximumFractionDigits: aggregation['decimals'] })
-
-				if (aggregation['rounding'] == -9) {
-					rounded_val += ' billion'
-				} else if (aggregation['rounding'] == -6) {
-					rounded_val += ' million'
+			if (indicator.key != 'sH_PGA') {
+				
+				// rounded_val = plugin._round_scale(properties[indicator_key])
+				
+				rounded_val = plugin._format_figure(properties[indicator_key])
+				
+				if (rounded_val.charAt(0) == '<') {
+					
+					popup_val = rp.less_than
+						+ ' '
+						+ indicator.legend.prepend
+						+ rounded_val.substring(1)
+						+ ' '
+						+ indicator.legend.append
+					
+				} else {
+					
+					popup_val = indicator.legend.prepend
+						+ rounded_val
+						+ ' '
+						+ indicator.legend.append
+					
 				}
-
+				
+			} else {
+				
+				rounded_val = plugin._round(properties[indicator_key], aggregation['rounding']).toLocaleString(undefined, { maximumFractionDigits: aggregation['decimals'] })
+				
+				popup_val = indicator.legend.prepend
+					+ rounded_val
+					+ ' '
+					+ indicator.legend.append
+				
 			}
+			
+			// if (indicator.type == 'dollars') {
 
-			return '<p>'
-				+ indicator.legend.prepend
-				+ rounded_val
-				+ ' '
-				+ indicator.legend.append
-				+ '</p>'
-				// + '<p>Real value: ' + e.layer.properties[indicator_key] + '</p>'
+				// rounded_val = plugin._round_scale(properties[indicator_key])
+
+// 			} else {
+// 
+// 				rounded_val = plugin._round(properties[indicator_key], aggregation['rounding']).toLocaleString(undefined, { maximumFractionDigits: aggregation['decimals'] })
+// 
+// 				if (aggregation['rounding'] == -9) {
+// 					rounded_val += ' billion'
+// 				} else if (aggregation['rounding'] == -6) {
+// 					rounded_val += ' million'
+// 				}
+// 
+// 			}
+
+			return '<p>' + popup_val + '</p>'
 
 		},
 
@@ -2692,7 +2843,7 @@ var grades, color_ramp
 						data: JSON.stringify(request_data),
 						success: function(data) {
 
-							// if (request.field == 'E_BldgTypeG') {
+							// if (request.field == 'E_BldgDesLev') {
 							// 	console.log('request', JSON.stringify(request_data))
 							// 	console.log('return', data)
 							// }
@@ -2757,28 +2908,129 @@ var grades, color_ramp
 		_round: function(num, power) {
 			return num * Math.pow(10, power)
 		},
-
-		_round_scale: function(num) {
-
-			var plugin = this,
-					rounded_num
-
-			// round the number to the given power
-			// shorten to 2 decimal places
-			// remove decimal places if equal to .00
-
-			if (num >= 1000000000) {
-				rounded_num = plugin._round(num, -9).toFixed(2).replace(/[.,]00$/, '') + ' billion'
-			} else if (num >= 100000) {
-				rounded_num = plugin._round(num, -6).toFixed(2).replace(/[.,]00$/, '') + ' million'
-			} else {
-				rounded_num = num.toLocaleString('en-CA', {
-					maximumFractionDigits: 0
-				})
+		
+		_format_figure: function(num) {
+			
+			var plugin = this
+			var plugin_settings = plugin.options
+			
+			var rounded_num = num
+			
+			if (plugin_settings.indicator.key == 'sCt_DebrisTotal') {
+				
+				if (num == 0) {
+					rounded_num = 0
+				} else if (num < 100) {
+					rounded_num = '<100'
+				} else {
+					rounded_num = plugin._significant_figs(num)
+				}
+				
+			} else if (plugin_settings.indicator.type == 'dollars') {
+				
+				// dollars
+				
+				if (num == 0) {
+					rounded_num = 0
+				} else if (num < 1000) {
+					rounded_num = '<1000'
+				} else {
+					rounded_num = plugin._significant_figs(num)
+				}	
+		
+			} else if (
+				plugin_settings.indicator.type == 'death' || 
+				plugin_settings.indicator.type == 'damage'
+			) {
+				
+				// injuries/damage
+				
+				if (num < 1) {
+					rounded_num = 0
+				} else if (num < 10) {
+					rounded_num = '<10'
+				} else {
+					rounded_num = plugin._significant_figs(num)
+				}
+				
 			}
-
+			
+			return rounded_num.toString()
+			
+		},
+		
+		_significant_figs: function(num) {
+			
+			var plugin = this
+			
+			var rounded_num = num
+			
+			if (num < 1000) {
+				
+				// XX0
+				
+				rounded_num = (plugin._round(num, -1).toFixed(0) * 10)
+				
+			} else if (num < 10000) {
+				
+				// X.X thousand
+				
+				rounded_num = plugin._round(num, -3).toFixed(1).replace(/[.,]0$/, '') + ' thousand'
+				
+			} else if (num < 100000) {
+				
+				// XX thousand
+				
+				rounded_num = plugin._round(num, -3).toFixed(0) + ' thousand'
+				
+			} else if (num < 1000000) {
+				
+				// XX0 thousand
+				
+				rounded_num = (plugin._round(num, -4).toFixed(0) * 10) + ' thousand'
+				
+			} else if (num < 10000000) {
+				
+				// X.X million
+				
+				rounded_num = plugin._round(num, -6).toFixed(1).replace(/[.,]0$/, '') + ' million'
+				
+			} else if (num < 100000000) {
+				
+				// XX million
+				
+				rounded_num = plugin._round(num, -6).toFixed(0) + ' million'
+				
+			} else if (num < 1000000000) {
+				
+				// XX0 million
+				
+				rounded_num = (plugin._round(num, -7).toFixed(0) * 10) + ' million'
+				
+			} else if (num < 10000000000) {
+				
+				// X.X billion
+				
+				rounded_num = plugin._round(num, -9).toFixed(1).replace(/[.,]0$/, '') + ' billion'
+				
+			} else if (num < 100000000000) {
+				
+				// XX billion
+				
+				rounded_num = plugin._round(num, -9).toFixed(0) + ' billion'
+				
+			} else if (num < 1000000000000) {
+				
+				// XX0 billion
+				
+				rounded_num = (plugin._round(num, -10).toFixed(0) * 10) + ' billion'
+				
+			}
+			
+			// console.log(num, rounded_num)
+			
 			return rounded_num
-
+			
 		}
 
   }

@@ -17,6 +17,7 @@
 <link rel="stylesheet" id="wpml-menu-item-0-css" href="./../../site/assets/plugins/sitepress-multilingual-cms/templates/language-switchers/menu-item/style.min.css?ver=1" type="text/css" media="all">
 <link rel="stylesheet" id="global-style-css" href="./../../site/assets/themes/fw-parent/style.css" type="text/css" media="all">
 <link rel="stylesheet" id="font-awesome-css" href="//use.fontawesome.com/releases/v5.9.0/css/all.css" type="text/css" media="all">
+<link rel="stylesheet" id="page-tour-css" href="./../../site/assets/plugins/pe-page-tour/page-tour.css?ver=1.0" type="text/css" media="all">
 <link rel="stylesheet" id="child-style-css" href="./../../site/assets/themes/fw-child/style.css" type="text/css" media="all">
 <script type="text/javascript" src="./../../site/wp-includes/js/jquery/jquery.min.js?ver=3.6.0" id="jquery-core-js"></script>
 <script type="text/javascript" src="./../../site/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2" id="jquery-migrate-js"></script>
@@ -65,6 +66,8 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"fr","expires":1,"path":
 <script type="text/javascript" src="./../../site/assets/themes/fw-parent/resources/js/helper-functions.js" id="helpers-js"></script>
 <script type="text/javascript" src="./../../site/assets/themes/fw-parent/resources/bower_components/pe-smooth-scroll/smooth-scroll.js" id="smooth-scroll-js"></script>
 <script type="text/javascript" src="./../../site/assets/themes/fw-parent/resources/js/global-functions.js" id="global-functions-js"></script>
+<script type="text/javascript" src="./../../site/wp-includes/js/jquery/ui/core.min.js?ver=1.13.1" id="jquery-ui-core-js"></script>
+<script type="text/javascript" src="./../../site/assets/plugins/pe-page-tour/page-tour.js?ver=1.0" id="page-tour-js"></script>
 <script type="text/javascript" id="child-functions-js-extra">
 /* <![CDATA[ */
 var admin_ajax_data = {"url":".\/site\/wp-admin\/admin-ajax.php"};
@@ -99,6 +102,16 @@ var admin_ajax_data = {"url":".\/site\/wp-admin\/admin-ajax.php"};
     </div>
 
     
+<script>
+	(function ($) {
+		$(function() {
+			$('#page-tour').page_tour({"default_open":true,"cookie":{"name":"rp-page-tour","expires":30},"labels":{"start_over":"Start Over","close":"Close","dont_show":"Don’t show again","next":"Next"},"classes":{"content":"p-1","footer":"p-0 border-top","close":"btn-sm btn-white border-right mr-1","dont_show":"mb-0 p-1","next":"btn-sm btn-primary"}})
+		});
+	}(jQuery));
+	
+</script>
+
+
 <div id="cookie-modal" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 		<div class="modal-content">

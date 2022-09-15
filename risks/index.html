@@ -17,6 +17,7 @@
 <link rel="stylesheet" id="wpml-menu-item-0-css" href="./../site/assets/plugins/sitepress-multilingual-cms/templates/language-switchers/menu-item/style.min.css?ver=1" type="text/css" media="all">
 <link rel="stylesheet" id="global-style-css" href="./../site/assets/themes/fw-parent/style.css" type="text/css" media="all">
 <link rel="stylesheet" id="font-awesome-css" href="//use.fontawesome.com/releases/v5.9.0/css/all.css" type="text/css" media="all">
+<link rel="stylesheet" id="page-tour-css" href="./../site/assets/plugins/pe-page-tour/page-tour.css?ver=1.0" type="text/css" media="all">
 <link rel="stylesheet" id="leaflet-css" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css?ver=1.7.1" type="text/css" media="all">
 <link rel="stylesheet" id="leaflet-cluster-css" href="./../site/assets/themes/fw-child/resources/vendor/Leaflet.markercluster-1.4.1/dist/MarkerCluster.css" type="text/css" media="all">
 <link rel="stylesheet" id="leaflet-cluster-default-css" href="./../site/assets/themes/fw-child/resources/vendor/Leaflet.markercluster-1.4.1/dist/MarkerCluster.Default.css" type="text/css" media="all">
@@ -296,7 +297,7 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 </ul>
 
 					</div>
-<!-- block --><p class="text-gray-400">Risk Profiler v1.0<span class="mx-1">•</span>Built with API v1.4.3<span class="mx-1">•</span>(<a href="https://github.com/OpenDRR/riskprofiler-cms/tree/v1.0-API_v1.4.3-20220908" class="text-gray-400">0908</a>)<span class="mx-1">•</span></p>
+<!-- block --><p class="text-gray-400">Risk Profiler v1.0<span class="mx-1">•</span>Built with API v1.4.3<span class="mx-1">•</span>(<a href="https://github.com/OpenDRR/riskprofiler-cms/tree/v1.0-API_v1.4.3-20220908-4-g02c589d" class="text-gray-400">0908-4-g02c589d</a>)<span class="mx-1">•</span></p>
 
 					<div id="footer-nav-block-2" class="block-type-text fw-block text-gray-400">
 						<div class="block-text">
@@ -391,11 +392,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eC_Fatality" class="risk-var" data-type="death" data-indicator='{
 		"key": "eC_Fatality",
-		"title": "Average annual fatalities",
+		"title": "Fatalities",
+		"type": "death",
 		"ranking": [584,579,582],
 		"aggregation": {"csd":{"rounding":"0","decimals":"0","max":"1","legend":[0,0.11111111111111116,0.22222222222222232,0.33333333333333337,0.4444444444444444,0.5555555555555556,0.6666666666666667,0.7777777777777778,0.8888888888888888]},"s":{"rounding":"0","decimals":"0","max":"1","legend":[0,0.11111111111111116,0.22222222222222232,0.33333333333333337,0.4444444444444444,0.5555555555555556,0.6666666666666667,0.7777777777777778,0.8888888888888888]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"people"}	}'>
-	<a href="./index.html#eC_Fatality" class="risk-var-link d-block p-2">Average annual fatalities</a>
+	<a href="./index.html#eC_Fatality" class="risk-var-link d-block p-2"><span class="item-title">Fatalities</span><span class="item-description">Average number of fatalities expected to occur in a year.</span></a>
 </div>
 
 	</div>
@@ -406,11 +408,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eCr_Fatality" class="risk-var" data-type="death" data-indicator='{
 		"key": "eCr_Fatality",
-		"title": "Average annual fatality rate",
+		"title": "Fatality Probability",
+		"type": "death",
 		"ranking": [579,584,581],
 		"aggregation": {"csd":{"rounding":"0","decimals":"2","max":"1","legend":[0,0.11111111111111116,0.22222222222222232,0.33333333333333337,0.4444444444444444,0.5555555555555556,0.6666666666666667,0.7777777777777778,0.8888888888888888]},"s":{"rounding":"0","decimals":"2","max":"1","legend":[0,0.11111111111111116,0.22222222222222232,0.33333333333333337,0.4444444444444444,0.5555555555555556,0.6666666666666667,0.7777777777777778,0.8888888888888888]}},
 		"legend": {"prepend":"","label_—_value":null,"append":""}	}'>
-	<a href="./index.html#eCr_Fatality" class="risk-var-link d-block p-2">Average annual fatality rate</a>
+	<a href="./index.html#eCr_Fatality" class="risk-var-link d-block p-2"><span class="item-title">Fatality Probability</span><span class="item-description">Probability of being killed by earthquake damage in a year.</span></a>
 </div>
 
 	</div>
@@ -421,11 +424,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eAALt_Asset" class="risk-var" data-type="dollars" data-indicator='{
 		"key": "eAALt_Asset",
-		"title": "Capital Asset Loss (Building + Contents)",
+		"title": "Asset Loss",
+		"type": "dollars",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"0","decimals":"0","max":"20000000","legend":[0,2222222.222222224,4444444.444444446,6666666.666666668,8888888.88888889,11111111.111111112,13333333.333333334,15555555.555555556,17777777.777777776]},"s":{"rounding":"0","decimals":"0","max":"1000000","legend":[0,111111.11111111112,222222.22222222225,333333.3333333334,444444.4444444445,555555.5555555555,666666.6666666667,777777.7777777778,888888.8888888889]}},
 		"legend": {"prepend":"$","label_—_value":null,"append":"CAD"}	}'>
-	<a href="./index.html#eAALt_Asset" class="risk-var-link d-block p-2">Capital Asset Loss (Building + Contents)</a>
+	<a href="./index.html#eAALt_Asset" class="risk-var-link d-block p-2"><span class="item-title">Asset Loss</span><span class="item-description">Average annual cost for potential buildings and contents damages.</span></a>
 </div>
 
 	</div>
@@ -436,11 +440,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eAALm_Asset" class="risk-var" data-type="dollars" data-indicator='{
 		"key": "eAALm_Asset",
-		"title": "Average Capital Asset Loss (Building + Contents) Ratio",
+		"title": "Asset Loss Ratio",
+		"type": "dollars",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"0","decimals":"2","max":"1","legend":[0,0.11111111111111116,0.22222222222222232,0.33333333333333337,0.4444444444444444,0.5555555555555556,0.6666666666666667,0.7777777777777778,0.8888888888888888]},"s":{"rounding":"0","decimals":"2","max":".1","legend":[0,0.011111111111111113,0.022222222222222227,0.03333333333333334,0.044444444444444446,0.05555555555555556,0.06666666666666668,0.07777777777777778,0.08888888888888889]}},
 		"legend": {"prepend":"","label_—_value":null,"append":""}	}'>
-	<a href="./index.html#eAALm_Asset" class="risk-var-link d-block p-2">Average Capital Asset Loss (Building + Contents) Ratio</a>
+	<a href="./index.html#eAALm_Asset" class="risk-var-link d-block p-2"><span class="item-title">Asset Loss Ratio</span><span class="item-description">Ratio of asset loss to asset value for buildings and contents.</span></a>
 </div>
 
 	</div>
@@ -451,11 +456,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eDt_Slight" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDt_Slight",
-		"title": "Buildings with Slight Damage",
+		"title": "Slightly Damaged Buildings",
+		"type": "damage",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"0","decimals":"0","max":"5000","legend":[0,555.5555555555557,1111.1111111111113,1666.666666666667,2222.222222222222,2777.777777777778,3333.3333333333335,3888.8888888888887,4444.444444444444]},"s":{"rounding":"0","decimals":"0","max":"30","legend":[0,3.333333333333332,6.666666666666664,10,13.333333333333332,16.666666666666664,20,23.333333333333332,26.666666666666668]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"buildings"}	}'>
-	<a href="./index.html#eDt_Slight" class="risk-var-link d-block p-2">Buildings with Slight Damage</a>
+	<a href="./index.html#eDt_Slight" class="risk-var-link d-block p-2"><span class="item-title">Slightly Damaged Buildings</span><span class="item-description">Number of buildings expected to incur 'slight damage' over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -466,11 +472,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eDtr_Slight" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDtr_Slight",
-		"title": "Probability of Slight Damage",
+		"title": "Slight Damage Probability",
+		"type": "damage",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"2","decimals":"2","max":"100","legend":[0,11.111111111111114,22.22222222222223,33.33333333333334,44.44444444444444,55.55555555555556,66.66666666666667,77.77777777777777,88.88888888888889]},"s":{"rounding":"2","decimals":"2","max":"50","legend":[0,5.555555555555557,11.111111111111114,16.66666666666667,22.22222222222222,27.77777777777778,33.333333333333336,38.888888888888886,44.44444444444444]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"%"}	}'>
-	<a href="./index.html#eDtr_Slight" class="risk-var-link d-block p-2">Probability of Slight Damage</a>
+	<a href="./index.html#eDtr_Slight" class="risk-var-link d-block p-2"><span class="item-title">Slight Damage Probability</span><span class="item-description">Probability of incurring 'slight damage' over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -481,11 +488,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eDt_Moderate" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDt_Moderate",
-		"title": "Buildings with Moderate Damage",
+		"title": "Moderately Damaged Buildings",
+		"type": "damage",
 		"ranking": [581,580,583,584],
 		"aggregation": {"csd":{"rounding":"0","decimals":"0","max":"500","legend":[0,55.55555555555554,111.11111111111109,166.66666666666663,222.22222222222223,277.77777777777777,333.3333333333333,388.8888888888889,444.44444444444446]},"s":{"rounding":"0","decimals":"0","max":"30","legend":[0,3.333333333333332,6.666666666666664,10,13.333333333333332,16.666666666666664,20,23.333333333333332,26.666666666666668]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"buildings"}	}'>
-	<a href="./index.html#eDt_Moderate" class="risk-var-link d-block p-2">Buildings with Moderate Damage</a>
+	<a href="./index.html#eDt_Moderate" class="risk-var-link d-block p-2"><span class="item-title">Moderately Damaged Buildings</span><span class="item-description">Number of buildings expected to incur 'moderate damage' over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -496,11 +504,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eDtr_Moderate" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDtr_Moderate",
-		"title": "Probability of Moderate Damage",
+		"title": "Moderate Damage Probability",
+		"type": "damage",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"2","decimals":"2","max":"100","legend":[0,11.111111111111114,22.22222222222223,33.33333333333334,44.44444444444444,55.55555555555556,66.66666666666667,77.77777777777777,88.88888888888889]},"s":{"rounding":"2","decimals":"2","max":"10","legend":[0,1.1111111111111107,2.2222222222222214,3.333333333333333,4.444444444444445,5.555555555555555,6.666666666666666,7.777777777777778,8.88888888888889]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"%"}	}'>
-	<a href="./index.html#eDtr_Moderate" class="risk-var-link d-block p-2">Probability of Moderate Damage</a>
+	<a href="./index.html#eDtr_Moderate" class="risk-var-link d-block p-2"><span class="item-title">Moderate Damage Probability</span><span class="item-description">Probability of incurring 'moderate damage' over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -511,11 +520,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eDt_Extensive" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDt_Extensive",
-		"title": "Buildings with Extensive Damage",
+		"title": "Extensively Damaged Buildings",
+		"type": "damage",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"0","decimals":"0","max":"100","legend":[0,11.111111111111114,22.22222222222223,33.33333333333334,44.44444444444444,55.55555555555556,66.66666666666667,77.77777777777777,88.88888888888889]},"s":{"rounding":"0","decimals":"0","max":"10","legend":[0,1.1111111111111107,2.2222222222222214,3.333333333333333,4.444444444444445,5.555555555555555,6.666666666666666,7.777777777777778,8.88888888888889]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"buildings"}	}'>
-	<a href="./index.html#eDt_Extensive" class="risk-var-link d-block p-2">Buildings with Extensive Damage</a>
+	<a href="./index.html#eDt_Extensive" class="risk-var-link d-block p-2"><span class="item-title">Extensively Damaged Buildings</span><span class="item-description">Number of buildings expected to incur 'extensive damage' over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -526,11 +536,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eDtr_Extensive" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDtr_Extensive",
-		"title": "Probability of Extensive Damage",
+		"title": "Extensive Damage Probability",
+		"type": "damage",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"2","decimals":"2","max":"100","legend":[0,11.111111111111114,22.22222222222223,33.33333333333334,44.44444444444444,55.55555555555556,66.66666666666667,77.77777777777777,88.88888888888889]},"s":{"rounding":"2","decimals":"2","max":"10","legend":[0,1.1111111111111107,2.2222222222222214,3.333333333333333,4.444444444444445,5.555555555555555,6.666666666666666,7.777777777777778,8.88888888888889]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"%"}	}'>
-	<a href="./index.html#eDtr_Extensive" class="risk-var-link d-block p-2">Probability of Extensive Damage</a>
+	<a href="./index.html#eDtr_Extensive" class="risk-var-link d-block p-2"><span class="item-title">Extensive Damage Probability</span><span class="item-description">Probability of incurring 'extensive damage' over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -541,11 +552,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eDt_Complete" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDt_Complete",
-		"title": "Buildings with Complete Damage",
+		"title": "Completely Damaged Buildings",
+		"type": "damage",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"0","decimals":"0","max":"100","legend":[0,11.111111111111114,22.22222222222223,33.33333333333334,44.44444444444444,55.55555555555556,66.66666666666667,77.77777777777777,88.88888888888889]},"s":{"rounding":"0","decimals":"0","max":"20","legend":[0,2.2222222222222214,4.444444444444443,6.666666666666666,8.88888888888889,11.11111111111111,13.333333333333332,15.555555555555555,17.77777777777778]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"buildings"}	}'>
-	<a href="./index.html#eDt_Complete" class="risk-var-link d-block p-2">Buildings with Complete Damage</a>
+	<a href="./index.html#eDt_Complete" class="risk-var-link d-block p-2"><span class="item-title">Completely Damaged Buildings</span><span class="item-description">Number of buildings expected to incur 'complete damage' over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -556,11 +568,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eDtr_Complete" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDtr_Complete",
-		"title": "Probability of Complete Damage",
+		"title": "Complete Damage Probability",
+		"type": "damage",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"2","decimals":"2","max":"100","legend":[0,11.111111111111114,22.22222222222223,33.33333333333334,44.44444444444444,55.55555555555556,66.66666666666667,77.77777777777777,88.88888888888889]},"s":{"rounding":"2","decimals":"2","max":"10","legend":[0,1.1111111111111107,2.2222222222222214,3.333333333333333,4.444444444444445,5.555555555555555,6.666666666666666,7.777777777777778,8.88888888888889]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"%"}	}'>
-	<a href="./index.html#eDtr_Complete" class="risk-var-link d-block p-2">Probability of Complete Damage</a>
+	<a href="./index.html#eDtr_Complete" class="risk-var-link d-block p-2"><span class="item-title">Complete Damage Probability</span><span class="item-description">Probability of incurring 'complete damage' over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -572,10 +585,11 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 <div id="risk-var-eDt_Collapse" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDt_Collapse",
 		"title": "Collapsed Buildings",
+		"type": "damage",
 		"ranking": [583,579,581],
 		"aggregation": {"csd":{"rounding":"0","decimals":"0","max":"50","legend":[0,5.555555555555557,11.111111111111114,16.66666666666667,22.22222222222222,27.77777777777778,33.333333333333336,38.888888888888886,44.44444444444444]},"s":{"rounding":"0","decimals":"0","max":"5","legend":[0,0.5555555555555554,1.1111111111111107,1.6666666666666665,2.2222222222222223,2.7777777777777777,3.333333333333333,3.888888888888889,4.444444444444445]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"buildings"}	}'>
-	<a href="./index.html#eDt_Collapse" class="risk-var-link d-block p-2">Collapsed Buildings</a>
+	<a href="./index.html#eDt_Collapse" class="risk-var-link d-block p-2"><span class="item-title">Collapsed Buildings</span><span class="item-description">Number of buildings expected to collapse over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -586,11 +600,12 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 		<!-- overlay-risks-indicator.php -->
 <div id="risk-var-eDtr_Collapse" class="risk-var" data-type="damage" data-indicator='{
 		"key": "eDtr_Collapse",
-		"title": "Probability of Building Collapse",
+		"title": "Collapse Probability",
+		"type": "damage",
 		"ranking": [],
 		"aggregation": {"csd":{"rounding":"2","decimals":"2","max":"100","legend":[0,11.111111111111114,22.22222222222223,33.33333333333334,44.44444444444444,55.55555555555556,66.66666666666667,77.77777777777777,88.88888888888889]},"s":{"rounding":"2","decimals":"2","max":"10","legend":[0,1.1111111111111107,2.2222222222222214,3.333333333333333,4.444444444444445,5.555555555555555,6.666666666666666,7.777777777777778,8.88888888888889]}},
 		"legend": {"prepend":"","label_—_value":null,"append":"%"}	}'>
-	<a href="./index.html#eDtr_Collapse" class="risk-var-link d-block p-2">Probability of Building Collapse</a>
+	<a href="./index.html#eDtr_Collapse" class="risk-var-link d-block p-2"><span class="item-title">Collapse Probability</span><span class="item-description">Probability of collapse over a 50 year period.</span></a>
 </div>
 
 	</div>
@@ -647,6 +662,8 @@ var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":
 <script type="text/javascript" src="./../site/assets/themes/fw-parent/resources/js/helper-functions.js" id="helpers-js"></script>
 <script type="text/javascript" src="./../site/assets/themes/fw-parent/resources/bower_components/pe-smooth-scroll/smooth-scroll.js" id="smooth-scroll-js"></script>
 <script type="text/javascript" src="./../site/assets/themes/fw-parent/resources/js/global-functions.js" id="global-functions-js"></script>
+<script type="text/javascript" src="./../site/wp-includes/js/jquery/ui/core.min.js?ver=1.13.1" id="jquery-ui-core-js"></script>
+<script type="text/javascript" src="./../site/assets/plugins/pe-page-tour/page-tour.js?ver=1.0" id="page-tour-js"></script>
 <script type="text/javascript" id="child-functions-js-extra">
 /* <![CDATA[ */
 var admin_ajax_data = {"url":".\/site\/wp-admin\/admin-ajax.php"};
@@ -659,6 +676,11 @@ var admin_ajax_data = {"url":".\/site\/wp-admin\/admin-ajax.php"};
 <script type="text/javascript" src="./../site/assets/themes/fw-child/resources/vendor/Highcharts-9.3.3/code/modules/exporting.js" id="highcharts-export-js"></script>
 <script type="text/javascript" src="./../site/assets/themes/fw-child/resources/vendor/Highcharts-9.3.3/code/modules/export-data.js" id="highcharts-export-data-js"></script>
 <script type="text/javascript" src="./../site/assets/themes/fw-child/resources/js/profiler.js" id="profiler-js"></script>
+<script type="text/javascript" id="rp-risks-js-extra">
+/* <![CDATA[ */
+var rp = {"less_than":"Less than"};
+/* ]]> */
+</script>
 <script type="text/javascript" src="./../site/assets/themes/fw-child/resources/js/rp_risks.js" id="rp-risks-js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.9/lottie.min.js" id="lottie-js"></script>
 <script type="text/javascript" src="./../site/assets/themes/fw-parent/resources/js/animation-functions.js" id="animation-js"></script>
@@ -696,6 +718,16 @@ var admin_ajax_data = {"url":".\/site\/wp-admin\/admin-ajax.php"};
     <style type="text/css">#footer-nav-block-2 a { color: var(--body); }</style>
 
     
+<script>
+	(function ($) {
+		$(function() {
+			$('#page-tour').page_tour({"default_open":true,"cookie":{"name":"rp-page-tour","expires":30},"labels":{"start_over":"Start Over","close":"Close","dont_show":"Don’t show again","next":"Next"},"classes":{"content":"p-1","footer":"p-0 border-top","close":"btn-sm btn-white border-right mr-1","dont_show":"mb-0 p-1","next":"btn-sm btn-primary"}})
+		});
+	}(jQuery));
+	
+</script>
+
+
 <div id="cookie-modal" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 		<div class="modal-content">
