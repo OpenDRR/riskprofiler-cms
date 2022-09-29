@@ -1968,7 +1968,6 @@ var grades, color_ramp
 			
 				if (aggregation.agg == '5km') {
 					tile_url.collection = tile_url.collection.slice(0, -4) + 'bin'
-					tile_url.collection = tile_url.collection.slice(0, -4) + 'bin'
 					feature_ID_key = 'gridid_5'
 				}
 				
@@ -2314,7 +2313,6 @@ var grades, color_ramp
 				feature_ID_key = 'gridid_1'
 
 				if (aggregation.agg == '5km') {
-					tile_url.collection = tile_url.collection.slice(0, -4) + 'bin'
 					tile_url.collection = tile_url.collection.slice(0, -4) + 'bin'
 					feature_ID_key = 'gridid_5'
 				}
