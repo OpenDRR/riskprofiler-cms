@@ -147,9 +147,9 @@ var sticky_offset = 0,
 			smooth_scroll_offset += $('#wpadminbar').outerHeight()
 		}
 
-    $(document).smooth_scroll({
-      debug: false,
-      offset: smooth_scroll_offset,
+		$(document).smooth_scroll({
+			debug: false,
+			offset: smooth_scroll_offset,
 			next: '.fw-section'
     })
 
