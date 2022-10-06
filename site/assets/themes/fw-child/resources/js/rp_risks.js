@@ -8,13 +8,13 @@ var z = 0
 
 ;(function ($) {
 
-  // custom select class
+	// custom select class
 
-  function rp_risks(item, options) {
+	function rp_risks(item, options) {
 
-    // options
+		// options
 
-    var defaults = {
+		var defaults = {
 			map: {
 				object: null,
 				panes: [],
@@ -50,23 +50,23 @@ var z = 0
 				data: [],
 				features: []
 			},
-      aggregation: {
-        'current': {},
-        'previous': null,
-        'settings': {
-          'default': [
-            { min: 11, max: 15, agg: 's', prop: 'Sauid', bbox: true },
-            { min: 1, max: 10, agg: 'csd', prop: 'csduid', bbox: false }
-          ]
-        }
-      },
+			aggregation: {
+				'current': {},
+				'previous': null,
+				'settings': {
+					'default': [
+						{ min: 11, max: 15, agg: 's', prop: 'Sauid', bbox: true },
+						{ min: 1, max: 10, agg: 'csd', prop: 'csduid', bbox: false }
+					]
+				}
+			},
 			indicator: {
 				key: 'eC_Fatality',
 				retrofit: 'b0'
 			},
 			legend: {
 				max: 0,
-        grades: [],
+				grades: [],
 				colors: [
 					'#ffffcc',
 					'#ffeda0',
@@ -105,33 +105,33 @@ var z = 0
 				feature_count: 0,
 				update_count: 0
 			},
-      debug: false
-    };
+			debug: false
+		};
 
-    this.options = $.extend(true, defaults, options);
+		this.options = $.extend(true, defaults, options);
 
-    this.item = $(item);
-    this.init();
-  }
+		this.item = $(item);
+		this.init();
+	}
 
-  rp_risks.prototype = {
+	rp_risks.prototype = {
 
-    // init
+		// init
 
-    init: function () {
+		init: function () {
 
-      var plugin = this;
-      var plugin_item = this.item;
-      var plugin_settings = plugin.options;
-      var plugin_elements = plugin_settings.elements;
+			var plugin = this;
+			var plugin_item = this.item;
+			var plugin_settings = plugin.options;
+			var plugin_elements = plugin_settings.elements;
 
-      //
-      // INITIALIZE
-      //
+			//
+			// INITIALIZE
+			//
 
-      if (plugin_settings.debug == true) {
-        console.log('risks', 'initializing')
-      }
+			if (plugin_settings.debug == true) {
+				console.log('risks', 'initializing')
+			}
 
 			if ($('body').hasClass('lang-fr')) {
 				plugin_settings.lang = 'fr'
@@ -144,7 +144,7 @@ var z = 0
 
 			// OBJECT
 
-	    plugin_settings.map.object = L.map('map', {
+			plugin_settings.map.object = L.map('map', {
 				zoomControl: false,
 				maxZoom: 14,
 				crs: L.CRS.EPSG900913,
@@ -193,7 +193,7 @@ var z = 0
 				for (var i = 1; i <= grades.length; i++) {
 
 					var row_markup = '<div class="legend-item" data-toggle="tooltip" data-placement="top" style="background-color: '
-            + plugin_settings.legend.colors[i - 1] + ';"'
+						+ plugin_settings.legend.colors[i - 1] + ';"'
 						+ ' title="'
 						+ prepend
 						+ grades[i - 1].toLocaleString(undefined, {
@@ -241,7 +241,7 @@ var z = 0
 			}
 
 			L.tileLayer(basemap_URL, {
-		    attribution: basemap_att
+				attribution: basemap_att
 			}).addTo(map)
 
 			// PANES
@@ -301,16 +301,16 @@ var z = 0
 			plugin_settings.search.element = L.DomUtil.create('div', 'map-search')
 
 			L.Control.Search = L.Control.extend({
-		    onAdd: function(map) {
+				onAdd: function(map) {
 
 					plugin_settings.search.element.innerHTML = '<input name="map-search-input" id="map-search-input" class="form-control" placeholder="Search communities">'
 
-	        return plugin_settings.search.element
-		    }
+					return plugin_settings.search.element
+				}
 			})
 
 			L.control.search = function(opts) {
-		    return new L.Control.Search(opts)
+				return new L.Control.Search(opts)
 			}
 
 			plugin_settings.map.search = L.control.search({
@@ -546,7 +546,7 @@ var z = 0
 
 								$('.app-main').removeClass('feature-selected')
 
-			        }
+							}
 
 						}, 500)
 
@@ -770,7 +770,7 @@ var z = 0
 
 			plugin.set_indicator(JSON.parse(init_item.attr('data-indicator')))
 
-    },
+		},
 
 		set_indicator: function(indicator) {
 
@@ -827,7 +827,7 @@ var z = 0
 				plugin_settings.indicator.ranking.forEach(function(item_id, i) {
 
 					var result = plugin_settings.sidebar.items.filter(obj => {
-					  return obj.post_id === parseInt(item_id)
+						return obj.post_id === parseInt(item_id)
 					})
 
 					if (result.length) {
@@ -897,7 +897,7 @@ var z = 0
 
 			var map = plugin_settings.map.object
 
-      var settings = $.extend(true, {
+			var settings = $.extend(true, {
 				event: null
 			}, fn_options)
 
@@ -931,8 +931,8 @@ var z = 0
 			})
 
 			// conditions for fetching new data
-      // 1. zoom action changed the aggregation setting
-      // 2. previous aggregation is empty - initial load of scenario
+			// 1. zoom action changed the aggregation setting
+			// 2. previous aggregation is empty - initial load of scenario
 
 			// if (settings.event == null) {
 			// 	console.log('no event')
@@ -945,33 +945,33 @@ var z = 0
 			// 	console.log('new aggregation')
 			// }
 
-      if (
+			if (
 				settings.event == null ||
-        (
-          plugin_settings.aggregation.previous !== null &&
-          plugin_settings.aggregation.current.agg !== plugin_settings.aggregation.previous
-        ) ||
-        plugin_settings.aggregation.previous == null
-      ) {
+				(
+					plugin_settings.aggregation.previous !== null &&
+					plugin_settings.aggregation.current.agg !== plugin_settings.aggregation.previous
+				) ||
+				plugin_settings.aggregation.previous == null
+			) {
 
-        // RESET MAP FEATURES
+				// RESET MAP FEATURES
 
-        // reset legend max
-        plugin_settings.legend.max = 0
+				// reset legend max
+				plugin_settings.legend.max = 0
 
-        // fetch new data
-        fetch = true
+				// fetch new data
+				fetch = true
 
-      }
+			}
 
-      if (fetch == true) {
+			if (fetch == true) {
 
 				// console.log('update map')
 
-        // get the tiles
+				// get the tiles
 				plugin.update_map()
 
-      }
+			}
 
 
 		},
@@ -1014,7 +1014,7 @@ var z = 0
 				tiles: plugin_settings.map.tiles,
 				options: {
 					pane: 'data',
-		      getFeatureId: function(feature) {
+					getFeatureId: function(feature) {
 
 						// if (feature.properties[indicator_key] > z) {
 						// 	z = feature.properties[indicator_key]
@@ -1026,9 +1026,9 @@ var z = 0
 						}
 
 						return feature.properties[feature_ID_key]
-		      },
+					},
 					bounds: bounds,
-		      vectorTileLayerStyles: plugin.set_choro_style('psra_indicators_' + plugin_settings.aggregation.current.agg, indicator_key)
+					vectorTileLayerStyles: plugin.set_choro_style('psra_indicators_' + plugin_settings.aggregation.current.agg, indicator_key)
 				},
 				functions: {
 					add: function(e) {
@@ -1075,22 +1075,34 @@ var z = 0
 
 								var aggregation = plugin_settings.indicator.aggregation[current_agg]
 								
+								var tooltip_val
+								
 								var this_val = plugin._format_figure(e.layer.properties[indicator_key])
 								
-								if (this_val.charAt(0) == '<') {
-									this_val = rp.less_than
+								if (plugin._format_figure(e.layer.properties[indicator_key]).charAt(0) == '<') {
+									
+									tooltip_val = rp.less_than
 										+ ' '
-										+ this_val.substring(1)
+										+ plugin_settings.indicator.legend.prepend
+										+ plugin._format_figure(e.layer.properties[indicator_key]).substring(1)
+										+ ' '
+										+ plugin_settings.indicator.legend.append
+										
+								} else {
+									
+									tooltip_val = plugin_settings.indicator.legend.prepend 
+										+ this_val 
+										+ ' '
+										+ plugin_settings.indicator.legend.append
+									
+									
 								}
 								
-								return plugin_settings.indicator.legend.prepend
-									+ this_val
-									+ ' '
-									+ plugin_settings.indicator.legend.append
+								return tooltip_val
 									
 							})
-				        .setLatLng(e.latlng)
-				        .addTo(map)
+								.setLatLng(e.latlng)
+								.addTo(map)
 
 						}
 
@@ -1100,17 +1112,17 @@ var z = 0
 						var properties = e.layer.properties
 
 						// if we have a clicked feature, reset its style
-		        if (plugin_settings.map.clicked_feature != null) {
-		          plugin_settings.map.tiles.resetFeatureStyle(plugin_settings.map.clicked_feature)
-		        }
+						if (plugin_settings.map.clicked_feature != null) {
+							plugin_settings.map.tiles.resetFeatureStyle(plugin_settings.map.clicked_feature)
+						}
 
 						plugin_settings.community = properties
 
 						$('.app-main').addClass('feature-selected')
 
-		        // set the clicked feature id
+						// set the clicked feature id
 
-		        plugin_settings.map.clicked_feature = properties[feature_ID_key]
+						plugin_settings.map.clicked_feature = properties[feature_ID_key]
 						plugin_settings.map.clicked_fill = e.layer.options.fillColor
 
 						// set the clicked feature style
@@ -1118,13 +1130,13 @@ var z = 0
 						plugin.set_clicked_style(plugin_settings.map.clicked_fill)
 
 						// set the popup content
-		        plugin_settings.map.popup.setContent(function() {
+						plugin_settings.map.popup.setContent(function() {
 
 							return plugin.popup_content(properties)
 
 						})
-			        .setLatLng(e.latlng)
-			        .openOn(map)
+							.setLatLng(e.latlng)
+							.openOn(map)
 
 					},
 					complete: function() {
@@ -1199,8 +1211,8 @@ var z = 0
 
 		_choro_color: function(d) {
 
-      var plugin = this
-      var plugin_settings = plugin.options
+			var plugin = this
+			var plugin_settings = plugin.options
 
 			var current_agg = plugin_settings.aggregation.current.agg,
 					agg_settings = plugin_settings.indicator.aggregation[current_agg]
@@ -1217,14 +1229,14 @@ var z = 0
 				d >= grades[5] ? '#feb24c' :
 				d >= grades[6] ? '#fed976' :
 				d >= grades[7] ? '#ffeda0' :
-        '#ffffcc'
+				'#ffffcc'
 
 		},
 
 		popup_content: function(properties) {
 
-      var plugin = this
-      var plugin_settings = plugin.options
+			var plugin = this
+			var plugin_settings = plugin.options
 
 			// console.log(properties)
 
@@ -1270,16 +1282,16 @@ var z = 0
 
 		},
 
-    item_detail: function(fn_options) {
+		item_detail: function(fn_options) {
 
-      var plugin = this
-      var plugin_item = this.item
-      var plugin_settings = plugin.options
-      var plugin_elements = plugin_settings.elements
+			var plugin = this
+			var plugin_item = this.item
+			var plugin_settings = plugin.options
+			var plugin_elements = plugin_settings.elements
 
 			var map = plugin_settings.map.object
 
-      // options
+			// options
 
 			var defaults = {
 				item_id: 1
@@ -1290,7 +1302,7 @@ var z = 0
 				fn_options = {}
 			}
 
-      var settings = $.extend(true, defaults, fn_options)
+			var settings = $.extend(true, defaults, fn_options)
 
 			console.log('risks', 'detail', plugin_settings.community)
 
@@ -1348,6 +1360,8 @@ var z = 0
 					}
 
 					// populate indicator values
+					
+					console.log(plugin_settings.community)
 
 					detail_content.find('[data-indicator').each(function() {
 
@@ -1361,18 +1375,34 @@ var z = 0
 						}
 
 						var this_val
-
-						if (plugin_settings.community[this_key + '_' + plugin_settings.api.retrofit]) {
+						
+						if (typeof plugin_settings.community[this_key + '_' + plugin_settings.api.retrofit] != 'undefined') {
+							
 							this_val = plugin_settings.community[this_key + '_' + plugin_settings.api.retrofit]
-						} else {
+							console.log(1, this_val)
+							
+						} else if (typeof plugin_settings.community[this_key] != 'undefined') {
+							
 							this_val = plugin_settings.community[this_key]
+							console.log(2, this_val)
+							
+						} else {
+							
+							// indicator not found
+							
+							$(this).hide()
+							
 						}
+						
+						// use new formatting function
+						
+						this_val = plugin._format_figure(this_val)
 
-						if (typeof $(this).attr('data-decimals') != 'undefined') {
-
-							this_val = this_val.toFixed(parseInt($(this).attr('data-decimals')))
-
-						}
+						// if (typeof $(this).attr('data-decimals') != 'undefined') {
+						// 	
+						// 	this_val = this_val.toFixed(parseInt($(this).attr('data-decimals')))
+						// 	
+						// }
 
 						if (typeof $(this).attr('data-prepend') != 'undefined') {
 
@@ -1467,69 +1497,69 @@ var z = 0
 					if (plugin_settings.community.fsauid) {
 
 						var request_data = {
-						  "aggs": {
-						    "0": {
-						      "terms": {
-						        "field": "properties.eEL_Period",
-						        "order": {
-						          "1": "asc"
-						        },
-						        "size": 15
-						      },
-						      "aggs": {
-						        "1": {
-						          "sum": {
-						            "field": "properties.eEL_b0"
-						          }
-						        },
-						        "2": {
-						          "avg": {
-						            "field": "properties.e5L_b0"
-						          }
-						        },
-						        "3": {
-						          "sum": {
-						            "field": "properties.e95L_b0"
-						          }
-						        }
-						      }
-						    }
-						  },
-						  "size": 0,
-						  "fields": [],
-						  "script_fields": {},
-						  "stored_fields": [ "*" ],
-						  "runtime_mappings": {},
-						  "_source": { "excludes": [] },
-						  "query": {
-						    "bool": {
-						      "must": [],
-						      "filter": [
-						        {
-						          "match_phrase": {
-						            "properties.eEL_FSAUID.keyword": plugin_settings.community.fsauid
-						          }
-						        },
-						        {
-						          "match_phrase": {
-						            "properties.eEL_OccGen.keyword": "RES"
-						          }
-						        },
-						        {
-						          "match_phrase": {
-						            "properties.eEL_BldgType.keyword": "Concrete"
-						          }
-						        },
-						        {
-						          "match_phrase": {
-						            "properties.eEL_type.keyword": "structural"
-						          }
-						        }
-						      ],
-						      "should": [],
-						      "must_not": []
-						    }
-						  }
+							"aggs": {
+								"0": {
+									"terms": {
+										"field": "properties.eEL_Period",
+										"order": {
+											"1": "asc"
+										},
+										"size": 15
+									},
+									"aggs": {
+										"1": {
+											"sum": {
+												"field": "properties.eEL_b0"
+											}
+										},
+										"2": {
+											"avg": {
+												"field": "properties.e5L_b0"
+											}
+										},
+										"3": {
+											"sum": {
+												"field": "properties.e95L_b0"
+											}
+										}
+									}
+								}
+							},
+							"size": 0,
+							"fields": [],
+							"script_fields": {},
+							"stored_fields": [ "*" ],
+							"runtime_mappings": {},
+							"_source": { "excludes": [] },
+							"query": {
+								"bool": {
+									"must": [],
+									"filter": [
+										{
+											"match_phrase": {
+												"properties.eEL_FSAUID.keyword": plugin_settings.community.fsauid
+											}
+										},
+										{
+											"match_phrase": {
+												"properties.eEL_OccGen.keyword": "RES"
+											}
+										},
+										{
+											"match_phrase": {
+												"properties.eEL_BldgType.keyword": "Concrete"
+											}
+										},
+										{
+											"match_phrase": {
+												"properties.eEL_type.keyword": "structural"
+											}
+										}
+									],
+									"should": [],
+									"must_not": []
+								}
+							}
 						}
 
 						var this_series = [
@@ -1653,7 +1683,7 @@ var z = 0
 								"script_fields": {},
 								"stored_fields": [ "*" ],
 								"runtime_mappings": {},
-							  "_source": { "excludes": [] },
+								"_source": { "excludes": [] },
 								"query": {
 									"bool": {
 										"must": [],
@@ -1751,14 +1781,14 @@ var z = 0
 				},
 				complete: function() {
 
-          $('body').removeClass('spinner-on')
+					$('body').removeClass('spinner-on')
 					$('#spinner-progress').text('')
 
 				}
 			})
 
 
-    },
+		},
 
 		_round: function(num, power) {
 			return num * Math.pow(10, power)
@@ -1792,12 +1822,16 @@ var z = 0
 			
 			// console.log(plugin_settings.indicator)
 			
+			if (typeof num == 'undefined') {
+				num = 0
+			}
+			
 			if (plugin_settings.indicator.key == 'eCr_Fatality') {
 				
 				if (num == 0) {
 					rounded_num = 0
 				} else {
-					console.log(1)
+					console.log(1, num)
 					rounded_num = plugin._significant_figs(num)
 				}
 				
@@ -1924,38 +1958,38 @@ var z = 0
 				
 			}
 			
-			console.log(num, rounded_num)
+			// console.log(num, rounded_num)
 			
 			return rounded_num
 			
 		}
 
-  }
+	}
 
-  // jQuery plugin interface
+	// jQuery plugin interface
 
-  $.fn.rp_risks = function (opt) {
-    var args = Array.prototype.slice.call(arguments, 1);
+	$.fn.rp_risks = function (opt) {
+		var args = Array.prototype.slice.call(arguments, 1);
 
-    return this.each(function () {
+		return this.each(function () {
 
-      var item = $(this);
-      var instance = item.data('rp_risks');
+			var item = $(this);
+			var instance = item.data('rp_risks');
 
-      if (!instance) {
+			if (!instance) {
 
-        // create plugin instance if not created
-        item.data('rp_risks', new rp_risks(this, opt));
+				// create plugin instance if not created
+				item.data('rp_risks', new rp_risks(this, opt));
 
-      } else {
+			} else {
 
-        // otherwise check arguments for method call
-        if (typeof opt === 'string') {
-          instance[opt].apply(instance, args);
-        }
+				// otherwise check arguments for method call
+				if (typeof opt === 'string') {
+					instance[opt].apply(instance, args);
+				}
 
-      }
-    });
-  }
+			}
+		});
+	}
 
 }(jQuery));
