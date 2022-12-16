@@ -1,3 +1,9 @@
+Note: This repository has been merged with and superseded by [OpenDRR/riskprofiler](https://github.com/OpenDRR/riskprofiler).
+
+This OpenDRR/riskprofiler-cms repo is kept for historical reference and for future experimentation.
+
+---
+
 # riskprofiler-cms
 
 Exploration of an offline workflow for the management and publishing of static web sites using WordPress.
@@ -40,7 +46,7 @@ git pull --recurse-submodules
 
 The static site can be deployed on GitHub Pages by extracting ZIP Archive created by the Simply Static plugin into your repository's *docs* folder. Enable GitHub pages as usual ensuring that it points to the *docs* folder. 
 
-Example: <https://opendrr.github.io/riskprofiler-cms/>
+Example: `https://opendrr.github.io/riskprofiler-cms/` (obsolete)
 
 <hr>
 
@@ -65,4 +71,4 @@ Exploration d'un flux de travail hors ligne pour la gestion et la publication de
 
 Le site statique peut être déployé sur les pages GitHub en extrayant l'archive ZIP créée par le plugin Simply Static dans le dossier *docs* de votre dépôt. Activez les pages GitHub comme d'habitude en vous assurant qu'elles pointent vers le dossier *docs*. 
 
-Exemple : <https://opendrr.github.io/riskprofiler-cms>
+Exemple : <https://opendrr.github.io/riskprofiler-cms> (obsolète)
